@@ -1,0 +1,49 @@
+{
+    "recipes": [
+        {
+            "id": 1,
+            "title": "Cr\u00eapes",
+            "ingredients": [
+                "Farine",
+                "Oeufs",
+                "Lait",
+                "Beurre"
+            ],
+            "steps": [
+                "M\u00e9langer les ingr\u00e9dients",
+                "Faire cuire dans une po\u00eale"
+            ],
+            "language": "fr",
+            "author": "chef1",
+            "status": "incomplete",
+            "comments": [
+                {
+                    "user": "UtilisateurAnonyme",
+                    "text": "bien"
+                },
+                {
+                    "user": "UtilisateurAnonyme",
+                    "text": ""
+                },
+                {
+                    "user": "UtilisateurAnonyme",
+                    "text": "Bonne recette"
+                },
+                {
+                    "user": "UtilisateurAnonyme",
+                    "text": "Alban n'aime pas la recette"
+                }
+            ],
+            "likes": 23,
+            "translations": []
+        }
+    ],
+    "users": [
+        {
+            "id": 1,
+            "username": "admin",
+            "password": "admin",
+            "role": "admin"
+        }
+    ]
+}
