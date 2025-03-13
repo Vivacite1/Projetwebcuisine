@@ -140,10 +140,36 @@ class RecetteController
 
         http_response_code(200);
         echo json_encode($recipeDetail, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-
     }
-    
-    public function handlePostRecetteRequest(): void
+
+    public function handleGetRecipesSearchNewRequest(array $params) :void 
+    {
+        header('Content-Type: application/json; charset=utf-8');
+
+        // Vérification du Content-Type
+        if (!in_array($_SERVER['CONTENT_TYPE'], ['application/x-www-form-urlencoded', 'application/json'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid Content-Type header']);
+            return;
+        }
+
+        $searchTerm = $params['search_param'];
+
+        $recipes = $this->getRecipesBySearch($searchTerm);
+
+        if (!$recipes) {
+            http_response_code(404);
+            echo json_encode([
+                'message' => 'Aucune recette trouvée pour ce nom',
+            ]);
+            return;
+        }
+
+        http_response_code(200);
+        echo json_encode($recipes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
+    public function handlePostRecetteRequest(array $params): void
     {
         header('Content-Type: application/json; charset=utf-8');
         
@@ -170,7 +196,7 @@ class RecetteController
         $idRecipe       = uniqid(); 
         $nameRecipe     = $data['name'] ?? '';
         $nameRecipeFR   = "";
-        $nameAuthor     = $data['author'] ?? '';
+        $nameAuthor     = $params['id_user'];
         $without        = $data['without'] ?? [];
         $ingredient     = $data['ingredients'] ?? [];
         $ingredientsFR  = "";
@@ -208,6 +234,25 @@ class RecetteController
         http_response_code(200);
         echo json_encode(['message' => 'Recette added successfully!', 'data' => $newRecette]);
     }
+
+    public function handlePostRecipeModifyRequest(array $params)
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        
+        // Vérifier si le Content-Type est correct
+        if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
+            http_response_code(400);
+            echo json_encode(['error' => 'Invalid Content-Type header']);
+            return;
+        }
+
+        $jsonData = file_get_contents('php://input');
+        $data = json_decode($jsonData, true);
+
+        $idRecipe = $params['id_recipe'];
+        
+        
+    }
     
     public function getRecipeByID($idRecipe)
     {
@@ -221,6 +266,20 @@ class RecetteController
         }
 
         return $recetteDetail;
+    }
+
+    public function getRecipesBySearch($searchTerm)
+    {
+        $recettes = $this->getAllRecette();
+        $recipeResearch = [];
+        foreach($recettes as $recette)
+        {
+            if(str_starts_with(strtolower($recette['name']),strtolower($searchTerm)))
+            {
+                $recipeResearch[] = $recette;
+            }
+        }
+        return $recipeResearch;
     }
 
     public function saveRecette($recette){
