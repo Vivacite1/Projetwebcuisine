@@ -1,0 +1,14 @@
+[
+    {
+        "id_user": "67d1db5418a12",
+        "mail": "albancousin12@gmail.com",
+        "password": "$2y$12$ORSPuGtpHNUerPQA4FwYeOSoMNBBOBBZyUO5XMp2vcSss5pwIuIru",
+        "role": "cuisinier"
+    },
+    {
+        "id_user": "67d1def77461c",
+        "mail": "albancousin122@gmail.com",
+        "password": "$2y$12$ThvrKGx1cXXvUYrbHHGka.fvCDKVXY7u2WhtfxWUJ\/7kdeY1JySxO",
+        "role": "cuisinier"
+    }
+]

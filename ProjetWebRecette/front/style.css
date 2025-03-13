@@ -1,0 +1,367 @@
+form {
+	width: fit-content;
+	display: flex;
+	flex-direction: column;
+	row-gap: 1rem;
+}
+
+.ajouterRecette {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #6C63FF;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+.enteteRecherche{
+    position: relative;
+}
+
+.ajouterRecette:hover {
+    background-color: #574bff;
+    transform: scale(1.05);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.ajouterRecette:active {
+    transform: scale(0.95);
+}
+
+.title {
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	font-size: 24px;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+input[type="text"], input[type="password"] {
+	padding: 0.5rem;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}	
+
+#comment-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#comment-list li {
+    background: #f4f4f4;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.recette-card {
+    text-align: center;
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    padding: 20px;
+    background: #fff;
+    max-width: 350px;
+    margin: 20px auto;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.recette-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 6px 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.recette-card h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.recette-image {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.recette-card p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 5px 0;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 25px;
+    padding: 5px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: auto;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px 15px;
+    font-size: 1rem;
+    border-radius: 25px 0 0 25px;
+}
+
+#rechercherRecette {
+    background-color: #6C63FF; 
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#rechercherRecette svg {
+    width: 20px;
+    height: 20px;
+    fill: white;
+}
+
+#rechercherRecette:hover {
+    background-color: #5548d9; /* Légèrement plus foncé au survol */
+}
+
+
+/* Styles pour la modale */
+.modal {
+    display: none; /* Cachée par défaut */
+    position: fixed;
+    z-index: 1000;
+    overflow-y: auto;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    backdrop-filter: blur(5px); /* Applique un flou à l'arrière-plan */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Contenu de la modale */
+.modal-content {
+    background: white;
+    padding: 20px;
+    width: 60%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.recette-header {
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #333;
+    background: none;
+    border: none;
+}
+
+.close:hover {
+    color: #f00; /* Change la couleur en rouge lorsque l'on survole le bouton */
+}
+
+
+/* Flouter le fond lorsque la modale est ouverte */
+body.modal-open {
+    overflow: hidden;
+}
+
+body.modal-open #recette-list {
+    filter: blur(5px);
+    pointer-events: none; /* Désactive les clics sur la liste des recettes */
+}
+
+.contenuFormulaire{
+    background: white;
+    padding: 20px;
+    width: 60%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+#formulaireRecette {
+    max-height: 80vh; /* Limite la hauteur à 80% de l'écran */
+    overflow-y: auto; /* Active la barre de défilement verticale si nécessaire */
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#formulaireModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-open {
+    overflow: hidden; /* Empêche le défilement de l'arrière-plan */
+}
+
+.etape {
+    display: flex;
+    align-items: center; /* Aligne verticalement le label et le textarea */
+    gap: 10px; /* Ajoute un espace entre le label et le textarea */
+}
+
+.etape label {
+    white-space: nowrap; /* Empêche le label de passer à la ligne */
+}
+
+.etape textarea {
+    flex: 1; /* Permet au textarea de prendre toute la place disponible */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical; /* Permet à l'utilisateur d'agrandir le champ verticalement */
+}
+
+.valider{
+    background-color: #6C63FF;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.valider:hover, .validerIngredient:hover, .boutonRecette:hover {
+    background-color: #574bff;
+    transform: scale(1.05);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.validerIngredient {
+    background-color: #6C63FF;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.boutonAjoutIngr{
+    display: flex;
+    justify-content: flex-end;
+}
+.listRestriction, .listEtape, #listIngredient{
+    list-style-type: none; /* Supprime les puces */
+    padding: 0;
+    margin-top: 10px;
+}
+
+.listRestriction li, .listEtape li,  #listIngredient li{
+    background-color: #f4f4f4; /* Fond gris clair */
+    border-radius: 20px; /* Coins arrondis */
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: bold;
+    color: #333;
+}
+
+.listRestriction li:hover, .listEtape li:hover, #listIngredient li:hover{
+    background-color: #e0e0e0; /* Changement de couleur au survol */
+}
+
+.supprimer {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.supprimer:hover {
+    background-color: #ff1a1a;
+}
+
+.ingredientContenu input {
+    width: 90%; /* Permet d'occuper toute la largeur */
+
+    margin-bottom: 10px; /* Espacement entre chaque champ */
+}
+
+.ingredientContenu label{
+    width: 90%; /* Permet d'occuper toute la largeur */
+    margin-bottom: 10px; /* Espacement entre chaque champ */
+}
+
+.contenuRest input {
+    width: 60%; /* L'input prend toute la largeur disponible */
+    box-sizing: border-box; /* Gère le padding sans dépasser */
+}
+
+.ingredientContenu input {
+    width: 85%; /* L'input prend toute la largeur disponible */
+    box-sizing: border-box; /* Gère le padding sans dépasser */
+}
+
+.enteteForm input {
+    width: 85%; /* L'input prend toute la largeur disponible */
+    box-sizing: border-box; /* Gère le padding sans dépasser */
+}
+.enteteForm label{
+    align-items: center;
+}
+
+.boutonRecette{
+    background-color: #6C63FF;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+
+
