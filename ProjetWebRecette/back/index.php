@@ -24,20 +24,25 @@ $router->register('POST', '/logout', [$authController, 'handleLogout']);
 
 $router->register('GET', '/role/ask/{id_user}', [$roleController, 'handlePostRole']);//fonctionne
 
-$router->register('GET', '/recetteAffiche', [$recetteController, 'handleGetRecipesRequest']);
-$router->register('POST', '/recetteSearch', [$recetteController, 'handleGetRecipesSearchRequest']);
-$router->register('POST', '/recetteDetail', [$recetteController, 'handleGetRecipesCard']);
+// $router->register('GET', '/recetteAffiche', [$recetteController, 'handleGetRecipesRequest']);
+// $router->register('POST', '/recetteSearch', [$recetteController, 'handleGetRecipesSearchRequest']);
+// $router->register('POST', '/recetteDetail', [$recetteController, 'handleGetRecipesCard']);
 
-$router->register('POST', '/recipe/detail/{id_recipe}', [$recetteController, 'handleGetRecipesCardDetail']);
+$router->register('GET', '/recipe/search/{search_param}', [$recetteController, 'handleGetRecipesSearchNewRequest']);//fonctionne
+$router->register('POST', '/recipe/detail/{id_recipe}', [$recetteController, 'handleGetRecipesCardDetail']);//fonctionne
 // $router->register('POST', '/like/recipe/[id_recipe]', [$recetteController, 'handlePostLikeRequest']);
 
-$router->register('POST', '/recipe/add', [$recetteController, 'handlePostRecetteRequest']);
+$router->register('POST', '/recipe/add/{id_user}', [$recetteController, 'handlePostRecetteRequest']);
+$router->register('POST', '/recipe/modify/{id_recipe}', [$recetteController, 'handlePostRecipeModifyRequest']);
 
-$router->register('POST', '/comment/recipe/{id_recipe}', [$commentController, 'handlePostRecipeCommentRequest']);
+$router->register('POST', '/comment/recipe/{id_recipe}', [$commentController, 'handlePostRecipeCommentRequest']);//fonctionne
 // $router->register('POST', '/comment/liste', [$recetteController, 'handlePostDisplayComment']);
 
-$router->register('POST', '/comment', [$commentController, 'handlePostCommentRequest']);
-$router->register('GET', '/commentAffiche', [$commentController, 'handleGetCommentsRequest']);
-$router->register('DELETE', '/commentSupprimer', [$commentController, 'handleDeleteCommentRequest']);
+
+
+
+// $router->register('POST', '/comment', [$commentController, 'handlePostCommentRequest']);
+// $router->register('GET', '/commentAffiche', [$commentController, 'handleGetCommentsRequest']);
+// $router->register('DELETE', '/commentSupprimer', [$commentController, 'handleDeleteCommentRequest']);
 
 $router->handleRequest();
