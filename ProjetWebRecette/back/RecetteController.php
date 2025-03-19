@@ -13,6 +13,7 @@ class RecetteController
 		$this->filePath = $filePath;
 		$this->authController = $authController;
 	}
+
     private function getAllRecette(): array
 	{
 		if (!file_exists($this->filePath)) {
@@ -146,13 +147,6 @@ class RecetteController
     {
         header('Content-Type: application/json; charset=utf-8');
 
-        // Vérification du Content-Type
-        if (!in_array($_SERVER['CONTENT_TYPE'], ['application/x-www-form-urlencoded', 'application/json'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Invalid Content-Type header']);
-            return;
-        }
-
         $searchTerm = $params['search_param'];
 
         $recipes = $this->getRecipesBySearch($searchTerm);
@@ -249,9 +243,17 @@ class RecetteController
         $jsonData = file_get_contents('php://input');
         $data = json_decode($jsonData, true);
 
+        $content = file_get_contents($this->filePath);
         $idRecipe = $params['id_recipe'];
-        
-        
+        $recipe = $this->getRecipeByID($idRecipe);
+        $recipes = json_decode($content, true);  
+
+        $recipeIndex = array_search($recipe['name'], array_column($recipes, 'name'));
+        $recipes[$recipeIndex] = array_replace($recipes[$recipeIndex], $data);
+
+        echo $data['name'];
+        http_response_code(200);
+        file_put_contents($this->filePath, json_encode($recipes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
     
     public function getRecipeByID($idRecipe)
@@ -282,12 +284,19 @@ class RecetteController
         return $recipeResearch;
     }
 
-    public function saveRecette($recette){
+    public function saveRecette($recette)
+    {
         $recettes = $this->getAllRecette();
 		$recettes[] = $recette;
 
 		file_put_contents($this->filePath, json_encode($recettes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 
+    /*
+    public function handleGetTraduireRecipe()
+    {
+        
+    }
+    */
 
 }

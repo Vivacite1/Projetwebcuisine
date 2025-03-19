@@ -128,6 +128,25 @@ class AuthController
 							'redirect' => 'connexion.html']);
 	}
 
+	public function getUserById($userId): array
+    {
+        $users = $this->getAllUsers();
+        foreach($users as $user)
+        {
+            if($user['id_user'] == $userId)
+            {
+                $userResearch = $user;
+            }
+        }
+
+        return $userResearch;
+    }
+
+	public function getFilePath(): string
+	{
+		return $this->filePath;
+	}
+
 	public function validateAuth(): ?string
 	{
 		return $_SESSION['user'] ?? null;
