@@ -93,7 +93,6 @@ class RoleController
         foreach ($users as $u) {
             if ($u['id_user'] == $userIdAsking) {
                 $u['role'] = "traducteur";  // Modification du rôle
-                $updated = true;
                 break;
             }
         }

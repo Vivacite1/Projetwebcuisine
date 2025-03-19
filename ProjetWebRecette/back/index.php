@@ -28,12 +28,9 @@ $router->register('POST', '/role/accept/{id_user}/{id_userAsking}', [$roleContro
 $router->register('GET', '/recipe', [$recetteController, 'handleGetRecipesRequest']);
 $router->register('GET', '/recipe/search/{search_param}', [$recetteController, 'handleGetRecipesSearchNewRequest']);//fonctionne
 $router->register('POST', '/recipe/detail/{id_recipe}', [$recetteController, 'handleGetRecipesCardDetail']);//fonctionne
-$router->register('POST', '/recipe/add/{id_user}', [$recetteController, 'handlePostRecetteRequest']);
-$router->register('POST', '/recipe/modify/{id_recipe}', [$recetteController, 'handlePostRecipeModifyRequest']);
+$router->register('POST', '/recipe/add/{id_user}', [$recetteController, 'handlePostRecetteRequest']);//fonctionne
+$router->register('POST', '/recipe/modify/{id_recipe}', [$recetteController, 'handlePostRecipeModifyRequest']);//fonctionne
 
-
-// $router->register('POST', '/recetteSearch', [$recetteController, 'handleGetRecipesSearchRequest']);
-// $router->register('POST', '/recetteDetail', [$recetteController, 'handleGetRecipesCard']);
 // $router->register('POST', '/like/recipe/[id_recipe]', [$recetteController, 'handlePostLikeRequest']);
 
 $router->register('POST', '/comment/recipe/{id_recipe}', [$commentController, 'handlePostRecipeCommentRequest']);//fonctionne
