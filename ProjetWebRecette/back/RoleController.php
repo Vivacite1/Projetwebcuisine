@@ -5,11 +5,10 @@ ini_set('display_errors', 1);
 
 class RoleController
 {
-	private string $filePathRole;
     private string $filePathDemande;
 	private AuthController $authController;
 
-	public function __construct(string $filePathRole, string $filePathDemande, AuthController $authController)
+	public function __construct(string $filePathDemande, AuthController $authController)
 	{
         $this->filePathRole     = $filePathRole;
         $this->filePathDemande  = $filePathDemande;
@@ -89,14 +88,18 @@ class RoleController
 
         $contenu    = file_get_contents($filePath);
         $users      = json_decode($contenu, true);
+        $user       = $this->authController->getUserById($userIdAsking);
+        $userIndex = array_search($user['id_user'], array_column($users, 'id_user'));
+        $users[$userIndex]['role'] = 'traducteur';
 
-        foreach ($users as $u) {
-            if ($u['id_user'] == $userIdAsking) {
-                $u['role'] = "traducteur";  // Modification du rôle
-                break;
-            }
-        }
+        $contenuDemande = file_get_contents($this->filePathDemande);
+        $demandes       = json_decode($contenuDemande,true);
+        $demande        = $this->getDemandeByIdUser($userIdAsking);
+        $demandeIndex   = array_search($demande['id_user'], array_column($demandes, 'id_user'));
+        unset($demandes[$demandeIndex]);
+        $demandes = array_values($demandes);
 
+        file_put_contents($this->filePathDemande, json_encode($demandes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         file_put_contents($filePath, json_encode($users, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         echo json_encode(["success" => true, "message" => "Rôle mis à jour"]);
         http_response_code(200);

@@ -6,12 +6,14 @@ ini_set('display_errors', 1);
 class RecetteController
 {
 	private string $filePath;
+    private string $filePathLike;
 	private AuthController $authController;
 
-	public function __construct(string $filePath, AuthController $authController)
+	public function __construct(string $filePath, string $filePathLike, AuthController $authController)
 	{
-		$this->filePath = $filePath;
-		$this->authController = $authController;
+		$this->filePath         = $filePath;
+        $this->filePathLike     = $filePathLike;
+		$this->authController   = $authController;
 	}
 
     private function getAllRecette(): array
@@ -254,6 +256,37 @@ class RecetteController
         echo $data['name'];
         http_response_code(200);
         file_put_contents($this->filePath, json_encode($recipes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    }
+
+    public function handlePostLikeRecipe(array $params)
+    {
+       $idRecipe    = $params['id_recipe'];
+       $idUser      = $params['id_user'];
+
+       $content     = file_get_contents($this->filePathLike);
+       $dejaLike    = false;
+       $allLikes    = $this->getAllLike();
+
+       if (isset($allLikes[$idRecipe])) 
+       {
+            if (in_array($idUser, $allLikes[$idRecipe]['likes'])) 
+            {
+                $dejaLike = true;
+            }
+        }
+
+        if(!$dejaLike)
+        {
+            $allLikes[$idRecipe]['likes'][] = $idUser;
+            http_response_code(201);
+            file_put_contents($this->filePathLike, json_encode($allLikes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            echo json_encode(["success" => true, "message" => "Like ajouté"]);
+
+        }else
+        {
+            http_response_code(404);
+            echo json_encode(["echec" => true, "message" => "Déjà liké"]);
+        }
     }
     
     public function getRecipeByID($idRecipe)

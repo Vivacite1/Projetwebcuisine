@@ -41,10 +41,11 @@ class CommentController
 			'firstname' => $firstname,
 			'lastname' => $lastname,
 			'message' => $message,
-			'timestamp' => date('c'),
 		];
 
 		// Save the comment
+		$allComments[$idRecipe] = ["likes" => [$idUser]];
+
 		$this->saveComment($newComment);
 
 		// Return the updated list of comments
@@ -57,7 +58,8 @@ class CommentController
 	private function saveComment(array $comment): void
 	{
 		$comments = $this->getAllComments();
-		$comments[] = $comment;
+		$idComment = uniqid();
+		$comments[$idComment] = $comment;
 
 		file_put_contents($this->filePath, json_encode($comments, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 	}
@@ -85,7 +87,7 @@ class CommentController
 
 		$id_recipe 	= $params['id_recipe'];
 		$id_user 	= "67d1db5418a12";
-		$comment 	= $_POST['comment'] ?? null;
+		$comment 	= $_POST['comment'];
 
 		if (!$id_recipe || !$comment ) {
 			http_response_code(400);
@@ -93,13 +95,15 @@ class CommentController
 			return;
 		}
 
-		$newComment = [
-			'id_recipe' => $id_recipe,
-			'id_user' => $id_user,
-			'comment' => $comment,
+		$comments = $this->getAllComments();
+		$idComment = uniqid();
+		$comments[$idComment] = [
+			"id_recipe" => $id_recipe,
+			"id_user"   => $id_user,
+			"comment"   => $comment
 		];
 
-		$this->saveComment($newComment);
+		file_put_contents($this->filePath, json_encode($comments, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 		http_response_code(200);
 		header('Content-Type: application/json; charset=utf-8');
@@ -113,20 +117,34 @@ class CommentController
 		echo json_encode($this->getAllComments(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 	}
 
-	public function handleDeleteCommentRequest(): void
+	public function handleDeleteCommentRequest(array $params): void
 	{	
-		$_SESSION['user'] = "alban";
-		$email = $_SESSION['user'];
-		if (!$email) {
+		$idUser = $params['id_user'];
+		$idComment = $params['id_comment'];
+		$user = $this->authController->getUserByID($idUser);
+
+		if (!$user['role'] == 'administrateur') {
 			http_response_code(401);
 			echo json_encode(['error' => 'Unauthorized']);
 			return;
 		}
 
-		file_put_contents($this->filePath, json_encode([]));
+		if(!isset($comments[$id_comment]))
+		{
+			http_response_code(401);
+			echo json_encode(['message' => 'Le commentaire n existe pas']);
+		}
+		
+		$contenu = file_get_contents($this->filePath);
+		$comments = json_decode($contenu,true);
+		print_r($comments);
+		unset($comments[$idComment]);
+		$comments = array_values($comments);
+		
+		file_put_contents($this->filePath,json_encode($comments, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 		http_response_code(200);
-		echo json_encode(['message' => 'All comments deleted']);
+		echo json_encode(['message' => 'Le commentaire a été supprimé avec succés']);
 	}
 
 }

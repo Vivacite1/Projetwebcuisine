@@ -58,6 +58,7 @@ const button1 = document.getElementById("get-recipes");
 if (button1) {
 	button1.addEventListener("click", async () => {
 		const recipes = await getRecette();
+		console.log("recettes : ", recipes);
 		await afficherRecette(recipes);
 	});
 }
@@ -307,7 +308,7 @@ async function getRecette()
 {
 	try {
 		// Send a GET request to the server to retrieve all comments
-		const response = await fetch(`${webServerAddress}/recetteAffiche`, {
+		const response = await fetch(`${webServerAddress}/recipe`, {
 			method: "GET",
 		});
 		
