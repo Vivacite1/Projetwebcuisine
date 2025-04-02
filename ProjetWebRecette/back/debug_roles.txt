@@ -1,0 +1,6 @@
+Array
+(
+    [email] => soso@gmail.com
+    [password] => sdzzdzkjzdzjjdz
+    [rolesSpeciaux] => DemandeChef
+)
