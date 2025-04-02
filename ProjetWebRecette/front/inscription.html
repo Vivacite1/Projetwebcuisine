@@ -4,30 +4,24 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Page Login</title>
-		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="inscription.css" />
 	</head>
 	<body>
-		<h1 class="title">Ma page login</h1>
-		<form id="register">
-				<label for="email">Email</label>
-				<input
-					type="text"
-					name="email"
-					id="email"
-					placeholder="Votre mail..."
-					required
-				/>
-			<div>
-				<label for="password">Mot de passe</label> 
-                <br>
-				<input
-					type="password"
-					name="password"
-					id="password"
-					required
-				/>
-			</div>
-			<input type="submit" value="S'inscrire" />
-		</form>
-    </body>
+		<div class="register-container">
+			<h2>Inscription</h2>
+			<form id="register-form">
+				<div class="input-group">
+					<label for="email">Email</label>
+					<input type="email" id="email" name="email" placeholder="Votre email" required>
+				</div>
+				<div class="input-group">
+					<label for="password">Mot de passe</label>
+					<input type="password" id="password" name="password" placeholder="Votre mot de passe" required>
+				</div>
+				<input type="submit" class="register-btn" value="S'inscrire"/>
+			</form>
+			<p>Déjà un compte ? <a href="connexion.html" class="login-link">Se connecter</a></p>
+		</div>
+	</body>
+	<script src="script.js"></script>
 </html>

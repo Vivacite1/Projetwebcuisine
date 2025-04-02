@@ -1,14 +1,26 @@
 [
     {
-        "id_user": "67d1db5418a12",
-        "mail": "albancousin12@gmail.com",
-        "password": "$2y$12$ORSPuGtpHNUerPQA4FwYeOSoMNBBOBBZyUO5XMp2vcSss5pwIuIru",
-        "role": "administrateur"
-    },
-    {
         "id_user": "67d1def77461c",
         "mail": "albancousin122@gmail.com",
         "password": "$2y$12$ThvrKGx1cXXvUYrbHHGka.fvCDKVXY7u2WhtfxWUJ\/7kdeY1JySxO",
+        "role": "traducteur"
+    },
+    {
+        "id_user": "67dbf72c672b5",
+        "mail": "albancousin12@gmail.com",
+        "password": "$2y$12$yJsnEOrxM3.b6PGNRGkfXOVnvYZGSAg0pz2eD51IOzA8jhAz.Wvju",
+        "role": "administrateur"
+    },
+    {
+        "id_user": "67ec26b5f02bc",
+        "mail": "lkanfeuae@gmail.com",
+        "password": "$2y$12$f4LSaPdeYaTDxXtMPXitTOYaYIKklwNL02N4yyqmqxpE7Wf91\/ALa",
+        "role": "cuisinier"
+    },
+    {
+        "id_user": "67ec2b7d5bd48",
+        "mail": "albancojzeohiuz@gmail.com",
+        "password": "$2y$12$6W5ml\/scqoGDnTqdKOVAF.QliH8d.\/34yqH8f0vZGjMB3XQK.ho1O",
         "role": "cuisinier"
     }
 ]

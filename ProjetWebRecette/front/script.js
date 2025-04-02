@@ -1,3 +1,5 @@
+"use strict"
+
 // Description: This file contains the JavaScript code for the front-end of the application.
 
 const webServerAddress = "http://localhost:8080";
@@ -10,17 +12,6 @@ if (form) {
 		const comments = await sendComment(event);
 		event.target.reset();
 		await displayComments(comments);
-	});
-}
-
-
-const formRecette = document.getElementById("form-recette");
-if(formRecette)
-{
-	console.log("requête envoyée");
-	formRecette.addEventListener("submit", async (event) => {
-		event.preventDefault();
-		const recette = await sendRecette(event);
 	});
 }
 
@@ -37,7 +28,6 @@ if (buttonSupprimer) {
 }
 
 const buttonDeconnexion = document.getElementById("deconnexion");
-
 if (buttonDeconnexion) {
 	buttonDeconnexion.addEventListener("click", async () => {
 		const success = await deconnexionUser();
@@ -53,27 +43,18 @@ if (button) {
 	});
 }
 
-const button1 = document.getElementById("get-recipes");
-
-if (button1) {
-	button1.addEventListener("click", async () => {
-		const recipes = await getRecette();
-		console.log("recettes : ", recipes);
-		await afficherRecette(recipes);
-	});
-}
-
-const form1 = document.getElementById("register");
+const form1 = document.getElementById("register-form");
 
 if (form1) {
 	form1.addEventListener("submit", async (event) => {
 		// Prevent the default form submission (page reload)
+		console.log("bien rentré")
 		event.preventDefault();
 		const client = await inscription(event);
 	});
 }
 
-const form2 = document.getElementById("connexion");
+const form2 = document.getElementById("login-form");
 
 if(form2) {
 	form2.addEventListener("submit", async (event) => {
@@ -91,10 +72,11 @@ if (searchRecipe){
 			console.log("Texte recherché :", searchTerm);
 			const recettes = await getRecettesByLettre(searchTerm);
 			console.log("Recettes filtrées :", recettes);
-			await afficherRecette(recettes);
-		}else{
-			const recipes = await getRecette();
-			await afficherRecette(recipes);
+			const likes 	= await getLike(); 
+			await afficherRecette(recettes,likes);
+		}else{ 
+			const recetteListeDiv = document.getElementById("recette-list");
+			recetteListeDiv.innerHTML = ""; 
 		}
 	});
 }
@@ -104,28 +86,18 @@ detailRecette.addEventListener("click", async (event) => {
 
     // Vérifie si on clique sur une image ou un titre
     if (target.tagName === "IMG" || target.tagName === "H2") {
-        const nomRecette = target.closest(".recette-card").querySelector("h2").textContent.trim();
-        
+		const idRecipe = target.closest(".recette-card").querySelector("#idRecipe").textContent.trim();        
         try {
-            const recette = await getRecettesByNom(nomRecette); // Récupération des données
+            const recette = await getRecettesById(idRecipe); // Récupération des données
 			console.log("test recette : ",recette);
-            await afficherDetailRecette(recette);
+			const likes = await getLike();
+            await afficherDetailRecette(recette,likes);
             await ouvrirModale();
         } catch (error) {
             console.error("Erreur lors de la récupération de la recette :", error);
         }
     }
 });
-
-const bouttonAjouterRecette = document.getElementById("ajouterRecette");
-if(bouttonAjouterRecette)
-{
-	bouttonAjouterRecette.addEventListener("click", async (event) => {
-		await afficherFormulaire();
-	})
-}
-
-
 
 /**
  * This function sends a POST request to the server with the form data to add a new comment.
@@ -180,13 +152,10 @@ async function inscription(event) {
         if (response.ok) {
             console.log("Inscription réussie:", result);
             alert(result.message);
+			window.location.href = result.redirect;
         } else {
             console.error("Échec de l'inscription:", result);
             alert(result.message);
-
-            if (result.redirect) {
-                window.location.href = result.redirect; // Redirection vers connexion.html
-            }
         }
         
         return result;
@@ -217,9 +186,9 @@ async function connexion(event) {
 
 		if (response.ok) {
 			const result = JSON.parse(text);
-			console.log("Connexion réussie:", result);
-			window.location.href = result.redirect; // Redirection vers index.html
-
+			localStorage.setItem("id_user", result.id_user);
+			localStorage.setItem("role", result.role);
+			window.location.href = result.redirect;
 			return result;
 		} else {
 			console.error("Échec de la connexion:", response.status, response.statusText);
@@ -236,6 +205,30 @@ async function getComments() {
 	try {
 		// Send a GET request to the server to retrieve all comments
 		const response = await fetch(`${webServerAddress}/commentAffiche`, {
+			method: "GET",
+		});
+		
+		if (response.ok) {
+			const result = await response.json();
+			console.log("Comments retrieved successfully:", result);
+			return result;
+		} else {
+			console.error(
+				"Échec de la récupération des commentaires:",
+				response.status,
+				response.statusText
+			);
+		}
+	} catch (error) {
+		console.error("Error occurred:", error);
+	}
+}
+
+async function getLike()
+{
+	try {
+		// Send a GET request to the server to retrieve all comments
+		const response = await fetch(`${webServerAddress}/like`, {
 			method: "GET",
 		});
 		
@@ -278,58 +271,38 @@ async function displayComments(comments) {
 	commentListeDiv.appendChild(ul)
 }
 
-async function supprimerTousLesCommentaires() {
+async function getRecette() {
 	try {
-		const response = await fetch(`${webServerAddress}/commentSupprimer`, {
-			method: "DELETE",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded",
-			},
-		});
-
-		if (response.ok) {
-			console.log("Tous les commentaires ont été supprimés avec succès.");
-			alert("Tous les commentaires ont été supprimés !");
-			// Rafraîchir la liste des commentaires après suppression
-			return true;
-		} else {
-			console.error("Échec de la suppression des commentaires:", response.status, response.statusText);
-			alert("Erreur lors de la suppression des commentaires.");
-			return false;
-		}
-	} catch (error) {
-		console.error("Erreur lors de la suppression:", error);
-		alert("Erreur lors de la suppression des commentaires.");
-		return false;
-	}
-}
-
-async function getRecette()
-{
-	try {
-		// Send a GET request to the server to retrieve all comments
 		const response = await fetch(`${webServerAddress}/recipe`, {
 			method: "GET",
 		});
-		
-		if (response.ok) {
-			const result = await response.json();
-			console.log("recipes retrieved successfully:", result);
-			return result;
-		} else {
+
+		if (!response.ok) {
 			console.error(
 				"Échec de la récupération des recettes:",
 				response.status,
 				response.statusText
 			);
+			return null;
 		}
+
+		const result = await response.json(); // Plus propre
+		console.log("Recipes retrieved successfully:", result);
+		return result;
 	} catch (error) {
 		console.error("Error occurred:", error);
+		return null;
 	}
 }
 
-async function afficherRecette(allRecettes) {
+/**
+ * 
+ * @param {*} allRecettes :
+ * @param {*} likes 
+ */
+async function afficherRecette(allRecettes,likes) {
     const listeRecette = allRecettes;
+	const listeLikes	= likes
     const recetteListeDiv = document.getElementById("recette-list");
 
     // On vide le contenu précédent
@@ -340,6 +313,10 @@ async function afficherRecette(allRecettes) {
         const recetteDiv = document.createElement("div");
         recetteDiv.classList.add("recette-card"); // Ajoute une classe pour le CSS
 
+		const idRecipe = document.createElement("p");
+		idRecipe.id = "idRecipe";
+		idRecipe.textContent = recette.id_recette
+
         // Titre de la recette
         const titre = document.createElement("h2");
 		titre.id = "detail-image";
@@ -347,11 +324,11 @@ async function afficherRecette(allRecettes) {
 
         // Auteur
         const auteur = document.createElement("p");
-        auteur.textContent = `Auteur: ${recette.Author}`;
+        auteur.textContent = `Auteur: ${recette.nameAuthor}`;
 
         // Description (Sans quoi ?)
         const description = document.createElement("p");
-        description.textContent = `Sans: ${recette.Without}`;
+        description.textContent = `Sans: ${recette.without}`;
 
         // Image de la recette
         const image = document.createElement("img");
@@ -360,25 +337,92 @@ async function afficherRecette(allRecettes) {
         image.classList.add("recette-image"); // Ajoute une classe pour le CSS
 		image.id = "detail-image";
 
+		// Initialisation du compteur de likes
+		let nombreLikes = 0;
+		if (listeLikes[recette.id_recette]) {
+			nombreLikes = listeLikes[recette.id_recette].likes.length;
+		}
+
+		let userLiked = false; 
+		if (listeLikes[recette.id_recette])
+		{
+			userLiked = listeLikes[recette.id_recette]
+			if (listeLikes[recette.id_recette].likes.includes("67d1def77461c")) {
+				userLiked = true;
+			}
+		}
+
+		// Bouton Like
+		const likeButton = document.createElement("button");
+		likeButton.textContent = `❤️ ${nombreLikes}`; // Affiche le nombre de likes
+		likeButton.classList.add("like-button");
+
+		// Ajoute la classe "liked" si l'utilisateur a déjà liké
+		if (userLiked) {
+			likeButton.classList.add("liked");
+		} else {
+			likeButton.classList.remove("liked");
+		}
+		likeButton.dataset.recipeId = recette.id_recette; // Stocke l'ID de la recette dans un attribut data-*
+
+        // Écouteur d'événement sur le bouton Like
+        likeButton.addEventListener("click", async () => {
+            await ajouteLike(recette.id_recette); // Appelle ajouteLike avec l'ID de la recette
+			document.getElementById("searchInput").value = "";
+            const recipes = await getRecette();
+            const likes = await getLike();
+            await afficherRecette(recipes, likes);
+        });
+
         // Ajout des éléments au conteneur de recette
+		recetteDiv.appendChild(idRecipe);
         recetteDiv.appendChild(titre);
         recetteDiv.appendChild(image);
         recetteDiv.appendChild(auteur);
         recetteDiv.appendChild(description);
+		recetteDiv.appendChild(likeButton);
 
         // Ajout au conteneur principal
         recetteListeDiv.appendChild(recetteDiv);
     });
 }
 
-async function getRecettesByLettre(searchTerm) {
-    try {
-        const response = await fetch(`${webServerAddress}/recetteSearch`, {
+async function ajouteLike(idRecipe)
+{
+	try {
+        const response = await fetch(`${webServerAddress}/like/recipe/`+idRecipe+`/67d1def77461c`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ search: searchTerm }), // Envoie la valeur de recherche
+        });
+
+        // Vérifie le type de contenu avant de parser
+        const contentType = response.headers.get('Content-Type');
+
+        if (response.ok) {
+            const responseText = await response.text(); // Récupère la réponse en texte brut
+			const result = JSON.parse(responseText); // Essaie explicitement de parser
+			return result; // Renvoie les résultats
+
+        } else {
+            console.error(
+                "Échec de la récupération des recettes:",
+                response.status,
+                response.statusText
+            );
+        }
+    } catch (error) {
+        console.error("Erreur survenue:", error);
+    }
+}
+async function getRecettesByLettre(searchTerm) {
+    try {
+        const response = await fetch(`${webServerAddress}/recipe/search/`+searchTerm, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
         });
 
         // Vérifie le type de contenu avant de parser
@@ -401,15 +445,14 @@ async function getRecettesByLettre(searchTerm) {
     }
 }
 
-async function getRecettesByNom(nomRecette)
+async function getRecettesById(idRecipe)
 {
 	try {
-        const response = await fetch(`${webServerAddress}/recetteDetail`, {
-            method: "POST",
+        const response = await fetch(`${webServerAddress}/recipe/detail/`+idRecipe, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ nomRec: nomRecette }), // Envoie la valeur de recherche
         });
 
         // Vérifie le type de contenu avant de parser
@@ -433,24 +476,21 @@ async function getRecettesByNom(nomRecette)
     }
 }
 
-async function afficherDetailRecette(recette) {
+async function afficherDetailRecette(recette,likes) {
 	if (!recette) return;
-
+	const listeLikes = likes;
 	const recetteDetailDiv = document.getElementById("recetteDetail");
 
-	recetteData = recette[0];
+	const recetteData = recette;
 	const titreRecette = document.createElement("h2");
 	console.log ("recette : ", recetteData);
 
 	titreRecette.textContent = recetteData.name;
 	console.log ("recette : ", recetteData.name);
 	recetteDetailDiv.innerHTML = `
-		<div class="recette-header" >
-		    <span class="close" >×</span> 
-        </div>
 		<h2>${recetteData.name}</h2>
 		<img src="${recetteData.imageURL}" alt="Image de ${recetteData.name}" class="recette-image">
-		<p><strong>Auteur :</strong> ${recetteData.Author}</p>
+		<p><strong>Auteur :</strong> ${recetteData.nameAuthor}</p>
 		<p><strong>Sans :</strong> ${recetteData.Without ? recetteData.Without.join(", ") : "Aucune restriction"}</p>
 
 		<h3>Ingrédients :</h3>
@@ -462,16 +502,48 @@ async function afficherDetailRecette(recette) {
 		<ol>
 			${recetteData.steps?.map(step => `<li>${step}</li>`).join("") || "<li>Aucune étape</li>"}
 		</ol>
+		<button id="detailBouton" class="like-button" > ❤️ ${listeLikes[recetteData.id_recette].likes.length} </button>
 	`;
+
+	let userLiked = false; 
+	if (listeLikes[recetteData.id_recette])
+	{
+		userLiked = listeLikes[recetteData.id_recette]
+		if (listeLikes[recetteData.id_recette].likes.includes("67d1def77461c")) {
+			userLiked = true;
+		}
+	}
+
+	const likeButton = document.getElementById("detailBouton");
+	// Ajoute la classe "liked" si l'utilisateur a déjà liké
+	if (userLiked) {
+		likeButton.classList.add("liked");
+	} else {
+		likeButton.classList.remove("liked");
+	}
+
+	likeButton.dataset.recipeId = recette.id_recette;
+	//Obliger d'ajouter l'événement dans la fonction
+	likeButton.addEventListener("click", async () => {
+		await ajouteLike(recetteData.id_recette); 
+		const recipe = await getRecettesById(recetteData.id_recette);
+		const likes = await getLike();
+		await afficherDetailRecette(recipe, likes);
+	});
 
 	//si l'utilisateur clique sur la croix
 	const fermerModal = document.querySelector(".close");
 	fermerModal.addEventListener("click", fermerModale);
 
 	//si l'utilisateur clique a coté de la fiche recette
-	window.addEventListener("click", (event) => {
+	window.addEventListener("click", async (event) => {
+		console.log("user est entré");
 		if (event.target === document.getElementById("recette-modal")) {
 			fermerModale();
+			const likes = await getLike();
+			const searchTerm = document.getElementById("searchInput").value;
+			const recipes = await getRecettesByLettre(searchTerm); 
+			await afficherRecette(recipes,likes);
 		}
 	});
 }
@@ -497,7 +569,6 @@ async function formAjouter()
 	const divFormulaire = document.getElementById("formulaireRecette");
 	divFormulaire.innerHTML = `
 		<h2>Ajouter une Recette</h2>
-    	<form id="form-recette">
 			<div class="enteteForm">
 				<label for="name">Nom (FR) :</label>
 				<input type="text" id="name" name="name">
@@ -558,8 +629,7 @@ async function formAjouter()
 			<input type="file" id="imageUpload" name="imageUpload" accept="image/*" onchange="previewImage(event)" />
 			<img id="imagePreview" src="" alt="Image preview" style="display: none; max-width: 100px; margin-top: 10px;" />
 
-			<input class="boutonRecette" type="submit" value="Envoyer"></button>
-    	</form> `;
+			<button class="boutonRecette" id="envoyerRecette">Envoyer la recette</button>`;
 
 	window.addEventListener("click", (event) => {
 		if (event.target === document.getElementById("formulaireModal")) {
@@ -568,6 +638,18 @@ async function formAjouter()
 			document.body.classList.remove("modal-open");
 		}
 	});
+
+	const boutonEnvoyer = document.getElementById("envoyerRecette");
+
+	if (boutonEnvoyer) {
+		console.log("envoyé");
+		boutonEnvoyer.addEventListener("click", async function () {
+			console.log("🟡 Clic détecté sur Envoyer !");
+			await sendRecette();
+		});
+	} else {
+		console.error("❌ Bouton d'envoi introuvable !");
+	}
 }
 
 async function previewImage(event) {
@@ -584,6 +666,7 @@ async function previewImage(event) {
         reader.readAsDataURL(file); // Lit le fichier comme une URL
     }
 }
+
 
 
 async function ajoutRestriction(event) {
@@ -646,7 +729,7 @@ async function ajouterEtape(event) {
 }
 
 async function ajouterIngredient(event) {
-	event.preventDefault();
+    event.preventDefault();
 
     // Récupère les valeurs des champs
     const quantite = document.getElementById("quantite").value.trim();
@@ -662,6 +745,10 @@ async function ajouterIngredient(event) {
     // Créer un nouvel élément <li> pour l'ingrédient
     const li = document.createElement("li");
     li.textContent = `${quantite} ${ingredient} (${type})`;
+
+	li.setAttribute("data-quantity", quantite);
+    li.setAttribute("data-name", ingredient);
+    li.setAttribute("data-type", type);
 
     // Créer un bouton de suppression
     const btnSupprimer = document.createElement("button");
@@ -683,34 +770,56 @@ async function ajouterIngredient(event) {
     document.getElementById("type").value = "";
 }
 
-async function sendRecette(event) {
-	const body = new URLSearchParams(new FormData(event.target));
 
-	console.log("Données envoyées:", body.toString());
+async function sendRecette() {
+    // Récupération des valeurs
+    const nameRecipe 	= document.getElementById("name").value.trim();
+    const author 		= document.getElementById("author").value.trim();
+    
+    const restrictions 	= Array.from(document.querySelectorAll("#listeRestriction li")).map(li => li.textContent);
+	const ingredients 	= Array.from(document.querySelectorAll("#listIngredient li")).map(li => {
+		// Assurer que tu as bien accès aux attributs 'data-name' et 'data-type'
+		const quantity 	= li.getAttribute("data-quantity"); // Utiliser getAttribute pour obtenir l'attribut 'data-quantity'
+		const type 		= li.getAttribute("data-type");        // Utiliser getAttribute pour obtenir l'attribut 'data-type'
+		const name 		= li.getAttribute("data-name");        // Utiliser getAttribute pour obtenir l'attribut 'data-name'
+		
+		return {
+			quantity: quantity,
+			name: name,
+			type: type
+		};
+	});	
 	
+    const steps 	= Array.from(document.querySelectorAll("#listEtape li")).map(li => li.textContent);
+	const imageUrl 	= document.getElementById("imageUpload").value.trim();
+
+    // Construction de l'objet JSON
+    const recetteData = {
+        name: nameRecipe,
+        nameAuthor: author,
+        without: restrictions,
+        ingredients: ingredients,
+        steps: steps,
+		imageURL: imageUrl
+    };
 
     try {
-        const response = await fetch(`${webServerAddress}/recette`, {
+        const response = await fetch(`${webServerAddress}/recipe/add/67dbf72c672b5`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(recetteData)
         });
 
+        const result = await response.json();
         if (response.ok) {
-            const result = await response.json();
-            console.log("Form submitted successfully:", result);
+            alert("Recette ajoutée avec succès !");
         } else {
-            console.error("Form submission failed:", response.status, response.statusText);
+            alert("Erreur lors de l'ajout de la recette !");
         }
     } catch (error) {
-        console.error("Error occurred:", error);
+        console.error(" Erreur :", error);
     }
 }
-
-
-
 
 async function deconnexionUser() {
 	try {
@@ -723,6 +832,8 @@ async function deconnexionUser() {
 			const result = await response.json();
 			console.log("déconnexion réussie", result);
 			window.location.href = result.redirect;
+			localStorage.removeItem("id_user");
+			localStorage.removeItem("role");
 			return result;
 		} else {
 			console.error(

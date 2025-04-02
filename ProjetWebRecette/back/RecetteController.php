@@ -30,7 +30,8 @@ class RecetteController
 	{
 		http_response_code(200);
 		header('Content-Type: application/json; charset=utf-8');
-		echo json_encode($this->getAllRecette(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $recettes = $this->getAllRecette();
+		echo json_encode($recettes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 	}
 
     public function getRecetteByTitle($searchTerm): array
@@ -202,7 +203,7 @@ class RecetteController
         $originalURL    = "";
     
         // Valider les champs principaux
-        if (!$nameRecipe || !$nameAuthor || !$without || !$ingredient || !$steps || !$imageURL) {
+        if (!$nameRecipe || !$nameAuthor || !$without || !$ingredient || !$steps) {
             http_response_code(400);
             echo json_encode(['error' => 'Missing required fields']);
             return;
@@ -269,24 +270,47 @@ class RecetteController
 
        if (isset($allLikes[$idRecipe])) 
        {
-            if (in_array($idUser, $allLikes[$idRecipe]['likes'])) 
-            {
-                $dejaLike = true;
-            }
-        }
+           if (in_array($idUser, $allLikes[$idRecipe]['likes'])) 
+           {
+               $allLikes[$idRecipe]["likes"] = array_values(array_diff($allLikes[$idRecipe]["likes"], [$idUser]));
+               $message = "Unlike";
+           }
+           else
+           {
+               $allLikes[$idRecipe]['likes'][] = $idUser;
+               $message = "Like ajouté";
+           }
+       }
+       else 
+       {
+           // 🆕 Ajouter une nouvelle recette avec le premier like
+           $allLikes[$idRecipe] = ["likes" => [$idUser]];
+           $message = "Nouvelle recette likée";
+       }
+       
+       // 💾 Sauvegarde dans le fichier JSON
+       file_put_contents($this->filePathLike, json_encode($allLikes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+       
+       http_response_code(201);
+       echo json_encode(["success" => true, "message" => $message]);       
+    }
 
-        if(!$dejaLike)
-        {
-            $allLikes[$idRecipe]['likes'][] = $idUser;
-            http_response_code(201);
-            file_put_contents($this->filePathLike, json_encode($allLikes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-            echo json_encode(["success" => true, "message" => "Like ajouté"]);
+    public function handleGetLike()
+    {
+        http_response_code(200);
+		header('Content-Type: application/json; charset=utf-8');
+        $likes = $this->getAllLike();
+		echo json_encode($likes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
 
-        }else
-        {
-            http_response_code(404);
-            echo json_encode(["echec" => true, "message" => "Déjà liké"]);
-        }
+    public function getAllLike()
+    {
+        if (!file_exists($this->filePathLike)) {
+			return [];
+		}
+
+		$content = file_get_contents($this->filePathLike);
+		return json_decode($content, true) ?? [];
     }
     
     public function getRecipeByID($idRecipe)

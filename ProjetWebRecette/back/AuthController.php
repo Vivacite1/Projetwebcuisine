@@ -5,10 +5,12 @@ ini_set('display_errors', 1);
 class AuthController
 {
 	private string $filePath;
+	private string $filePathDemande;
 
-	public function __construct(string $filePath)
+	public function __construct(string $filePath, string $filePathDemande)
 	{
 		$this->filePath = $filePath;
+		$this->filePathDemande = $filePathDemande;
 	}
 
 	// TODO: Implement the handleRegister method
@@ -70,10 +72,9 @@ class AuthController
 
 	}
 
-
 	// TODO: Implement the handleLogin method
 	public function handleLogin(): void
-	{
+	{   
 		// Vérifier le type de contenu
 		if ($_SERVER['CONTENT_TYPE'] !== 'application/x-www-form-urlencoded') {
 			http_response_code(400);
@@ -104,6 +105,8 @@ class AuthController
 					echo json_encode(['message' => 'Mot de passe incorrect'.$user['password'].' : '.$password]);
 					return;
 				}
+				$_SESSION['user'] = $user['id_user'];
+				$userRole = $user['role'];
 			}
 		}
 		if(!$trouve){
@@ -112,17 +115,16 @@ class AuthController
 			return;
 		}
 
-
-		$_SESSION['user'] = "alban";
 		http_response_code(200);
 		echo json_encode(['message' => 'Connexion réussie',
-						'redirect' => 'index.html']);
+						'redirect' => 'index.html',
+					     'id_user' => $_SESSION['user'],
+						  'role' => $userRole]);
 	}
 
 
 	public function handleLogout(): void
 	{
-		session_destroy(); // Clear session
 		http_response_code(200);
 		echo json_encode(['message' => 'Logged out successfully',
 							'redirect' => 'connexion.html']);
@@ -152,8 +154,29 @@ class AuthController
 		return $_SESSION['user'] ?? null;
 	}
 
+
+	public function handleGetUser() : void
+	{
+		http_response_code(200);
+		header('Content-Type: application/json; charset=utf-8');
+        $users = $this->getAllUsers();
+		echo json_encode($users, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+	}
+
+	public function handleGetDemande() : void
+	{
+		http_response_code(200);
+		header('Content-Type: application/json; charset=utf-8');
+        $demandes = $this->getAllDemande();
+		echo json_encode($demandes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+	}
+
 	private function getAllUsers(): array
 	{
 		return file_exists($this->filePath) ? json_decode(file_get_contents($this->filePath), true) ?? [] : [];
+	}
+	private function getAllDemande(): array
+	{
+		return file_exists($this->filePathDemande) ? json_decode(file_get_contents($this->filePathDemande), true) ?? [] : [];
 	}
 }

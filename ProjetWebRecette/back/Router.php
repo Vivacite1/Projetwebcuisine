@@ -1,54 +1,6 @@
-<!-- <?php
+<?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
-
-// class Router
-// {
-// 	private array $routes = [];
-
-// 	/**
-// 	 * Register a new route
-// 	 */
-// 	public function register(string $method, string $path, callable $handler): void
-// 	{		
-// 		$this->routes[] = [
-// 			'method' => strtoupper($method),
-// 			'path' => $path,
-// 			'handler' => $handler,
-// 		];
-// 	}
-
-// 	public function handleRequest(): void
-// 	{
-// 		header('Content-Type: application/json; charset=UTF-8');
-// 		header("Access-Control-Allow-Origin: *");
-// 		header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-// 		header("Access-Control-Allow-Headers: Content-Type, Authorization");
-
-// 		// Get the HTTP method and path of the request
-// 		$method = $_SERVER['REQUEST_METHOD'];
-// 		$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-	
-// 		// ✅ Gérer la requête OPTIONS (préflight CORS)
-// 		if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-// 			http_response_code(204); // 204 = No Content
-// 			exit;
-// 		}
-// 		foreach ($this->routes as $route) {
-// 			if ($route['method'] === $method && $route['path'] === $path) {
-// 				// If a route matches the request, call the handler
-// 				call_user_func($route['handler']);
-// 				return;
-// 			}
-// 		}
-
-// 		// If no route was found, return a 404
-// 		http_response_code(404);
-// 		echo json_encode(['error' => 'Route not found']);
-// 	}
-// }
-
 
 class Router
 {
