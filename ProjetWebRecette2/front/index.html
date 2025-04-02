@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page perso</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- Section avec image en demi arrière-plan -->
+    <div class="hero-section">
+        <h1>Bienvenue sur notre site de recettes</h1>
+        <button class="hero-button">Découvrir les recettes</button>
+    </div>
+
+    <!-- Boutons principaux regroupés et stylisés -->
+    <div class="button-container">
+        <button id="get-comments">Afficher les commentaires</button>
+        <button id="get-recipes">Afficher recettes</button>
+        <button id="supprimerCommentaire">Supprimer Commentaires</button>
+        <button id="deconnexion">Déconnexion</button>
+        <button onClick="formAjouter()" class="ajouterRecette" id="ajouterRecette">Ajouter Recette</button>
+    </div>
+
+    <!-- Formulaire de commentaire -->
+    <form id="post-comment">
+        <label for="firstname">Prénom</label>
+        <input type="text" name="firstname" id="firstname" placeholder="Votre prénom..." required />
+        <div>
+            <label for="lastname">Nom</label>
+            <input type="text" name="lastname" id="lastname" placeholder="Votre nom..." required />
+        </div>
+        <textarea name="message" placeholder="Votre message..."></textarea>
+        <input type="submit" value="Envoyer" />
+    </form>
+
+    <div id="comment-list"></div>
+
+    <!-- Recherche de recette -->
+    <div class="search-container">
+        <input type="search" placeholder="Chercher une recette..." class="search-input">
+        <button id="rechercherRecette">🔍</button>
+    </div>
+
+    <div id="recette-list"></div>
+
+    <!-- Modale pour formulaire de recette -->
+    <div id="formulaireModal" class="modal">
+        <div class="contenuFormulaire">
+            <div id="formulaireRecette"></div>
+        </div>
+    </div>
+
+    <!-- Modale pour détail de recette -->
+    <div id="recette-modal" class="modal">
+        <div class="modal-content">
+            <div id="recetteDetail"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -7,40 +7,21 @@
 		<link rel="stylesheet" href="style.css" />
 	</head>
 	<body>
-		<button id="get-comments">Afficher les commentaires</button>
-		<button id="get-recipes"> Afficher recettes </button>
-		<form id="post-comment">
-				<label for="firstname">Prénom</label>
-				<input
-					type="text"
-					name="firstname"
-					id="firstname"
-					placeholder="Votre prénom..."
-					required
-				/>
-			</div>
-			<div>
-				<label for="lastname">Nom</label>
-				<input
-					type="text"
-					name="lastname"
-					id="lastname"
-					placeholder="Votre nom..."
-					required
-				/>
-			</div>
-			<textarea name="message" placeholder="Votre message..."></textarea>
-			<input type="submit" value="Envoyer" />
-		</form>
-		<button id="supprimerCommentaire">Supprimer Commentaires</button>
-		<button id="deconnexion">Déconnexion</button>
-		<div id="comment-list"></div>
+		<nav class="navbar">
+			<a href="#" class="logo">Recipe Book</a>
+			<ul class="nav-links">
+				<li><a href="listeUtilisateur.html">Liste Utilisateur</a></li>
+				<li><a href="index.html">Liste Recette</a></li>
+				<li><a id="deconnexion">Déconnexion</a>
+			</ul>
+		</nav>
+		
 		<div class="enteteRecherche">
 			<button onClick="formAjouter()" class="ajouterRecette" id="ajouterRecette"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
 				<path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
-			  </svg></button>
+				</svg></button>
 			<div class="search-container">
-				<input type="search" placeholder="Chercher une recette..." class="search-input">
+				<input type="search" placeholder="Chercher une recette..." class="search-input" id="searchInput">
 				<button id="rechercherRecette">
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
 						<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
@@ -60,6 +41,9 @@
 		
 		<div id="recette-modal" class="modal">
 			<div class="modal-content">
+				<div class="recette-header" >
+					<span class="close" >×</span> 
+				</div>
 				<div id="recetteDetail">
 					<!-- Détails de la recette affichés ici -->
 				</div>

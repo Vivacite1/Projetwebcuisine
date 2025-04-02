@@ -5,6 +5,11 @@ form {
 	row-gap: 1rem;
 }
 
+.deconnexion{
+    background-color: #6C63FF;
+
+}
+
 .ajouterRecette {
     position: absolute;
     top: 0;
@@ -21,6 +26,7 @@ form {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 .enteteRecherche{
+    padding-top: 20px;
     position: relative;
 }
 
@@ -95,6 +101,11 @@ input[type="text"], input[type="password"] {
     margin: 5px 0;
 }
 
+.recette-card #idRecipe{
+    visibility: hidden;
+    position: absolute;
+}
+
 .search-container {
     display: flex;
     align-items: center;
@@ -161,9 +172,11 @@ input[type="text"], input[type="password"] {
     padding: 20px;
     width: 60%;
     max-width: 600px;
+    max-height: 600px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
     text-align: center;
+    overflow-y: auto;
 }
 
 .recette-header {
@@ -172,7 +185,6 @@ input[type="text"], input[type="password"] {
 
 .close {
     position: absolute;
-    top: 10px;
     right: 10px;
     font-size: 30px;
     cursor: pointer;
@@ -362,6 +374,131 @@ body.modal-open #recette-list {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+.like-button {
+    background-color: #ff4d4d; /* Rouge doux */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 20px; /* Bouton arrondi */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espacement entre le texte et l'icône */
+}
+
+/* Quand l'utilisateur like */
+.like-button.liked {
+    background-color: #34d399; /* Vert */
+    color: white;
+}
+
+/* Effet au survol */
+.like-button:hover {
+    background-color: #e63946; /* Rouge plus foncé */
+}
+
+/* Effet au clic */
+.like-button:active {
+    transform: scale(1.1); /* Légère pulsation */
+}
+
+
+.navbar {
+    background-color: #6C63FF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.navbar .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li {
+    display: inline;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+    padding: 8px 12px;
+    border-radius: 5px;
+}
+
+.nav-links a:hover {
+    background-color: #5548d9;
+    color: #fff;
+}
+
+.nav-links a:active {
+    transform: scale(0.95);
+}
+
+/* Style du tableau */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 16px;
+    text-align: left;
+}
+
+/* En-tête du tableau */
+.user-table thead {
+    background-color: #6C63FF;
+    color: white;
+}
+
+.user-table th, .user-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Boutons */
+.acceptButton, .rejectButton {
+    border: none;
+    padding: 6px 12px;
+    margin: 2px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.acceptButton {
+    background-color: #28a745;
+    color: white;
+}
+
+.rejectButton {
+    background-color: #dc3545;
+    color: white;
+}
+
+.acceptButton:hover {
+    background-color: #218838;
+}
+
+.rejectButton:hover {
+    background-color: #c82333;
+}
 
 
 

@@ -1,0 +1,130 @@
+/* Refonte du style pour un design moderne avec image en demi arrière-plan */
+
+:root {
+    --primary-color: #FF6F61;
+    --secondary-color: #333;
+    --background-color: #f4f4f4;
+    --card-bg-color: #fff;
+    --text-color: #555;
+    --button-hover-color: #FF4A39;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --border-radius: 12px;
+    --transition-time: 0.3s;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+    color: var(--text-color);
+}
+
+/* Image demi-arrière-plan */
+.hero-section {
+    background: url('arriereindex.png') no-repeat center center/cover;
+    height: 50vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    margin: 0;
+}
+
+/* Boutons sur l'image */
+.hero-button {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 10px 20px;
+    margin: 20px;
+    border-radius: 30px;
+    transition: background-color var(--transition-time);
+}
+
+.hero-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Conteneur de boutons alignés */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+/* Boutons principaux stylisés */
+button, .btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-time), transform var(--transition-time);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+button:hover, .btn:hover {
+    background-color: var(--button-hover-color);
+    transform: translateY(-2px);
+}
+
+button:active, .btn:active {
+    transform: scale(0.98);
+}
+
+/* Formulaire moderne */
+form {
+    background-color: var(--card-bg-color);
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 400px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+input[type="text"], input[type="password"], textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    transition: border-color var(--transition-time);
+}
+
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+input[type="submit"] {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: background-color var(--transition-time);
+    width: 100%;
+}
+
+input[type="submit"]:hover {
+    background-color: var(--button-hover-color);
+}
