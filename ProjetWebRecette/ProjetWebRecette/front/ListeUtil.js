@@ -122,6 +122,7 @@ async function afficherUser(users, demandes) {
 
 async function accepterDemande(idUserAsking, role) {
     try {
+<<<<<<< HEAD:ProjetWebRecette/ProjetWebRecette/front/ListeUtil.js
         if (!idUserAsking || !role) {
             console.error("Erreur : ID utilisateur ou rôle manquant !");
             return;
@@ -147,6 +148,33 @@ async function accepterDemande(idUserAsking, role) {
             return data;
         } else {
             console.error("Erreur lors de la requête :", response.status, data.error);
+=======
+        const idUser = localStorage.getItem("id_user");
+
+        const params = new URLSearchParams();
+        params.append("role", role);
+        params.append("id_userAsking", idUserAsking);
+
+        const response = await fetch(`${webServerAddress}/role/accept/${idUser}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: params,
+        });
+        console.log("Demande acceptée");
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log("Demande acceptée avec succès :", result);
+            const users      = await getUsers();
+            const demandes   = await getDemandes();
+            await afficherUser(users, demandes);
+            return result;
+        } else {
+            const errorText = await response.text();
+            console.error("Échec de la demande:", response.status, response.statusText, errorText);
+>>>>>>> alban:ProjetWebRecette/front/ListeUtil.js
         }
     } catch (error) {
         console.error("Une erreur est survenue :", error);
@@ -156,3 +184,7 @@ async function accepterDemande(idUserAsking, role) {
 
 
 
+<<<<<<< HEAD:ProjetWebRecette/ProjetWebRecette/front/ListeUtil.js
+=======
+
+>>>>>>> alban:ProjetWebRecette/front/ListeUtil.js

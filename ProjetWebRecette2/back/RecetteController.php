@@ -6,12 +6,14 @@ ini_set('display_errors', 1);
 class RecetteController
 {
 	private string $filePath;
+    private string $filePathLike;
 	private AuthController $authController;
 
-	public function __construct(string $filePath, AuthController $authController)
+	public function __construct(string $filePath, string $filePathLike, AuthController $authController)
 	{
-		$this->filePath = $filePath;
-		$this->authController = $authController;
+		$this->filePath         = $filePath;
+        $this->filePathLike     = $filePathLike;
+		$this->authController   = $authController;
 	}
 
     private function getAllRecette(): array
@@ -28,7 +30,8 @@ class RecetteController
 	{
 		http_response_code(200);
 		header('Content-Type: application/json; charset=utf-8');
-		echo json_encode($this->getAllRecette(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        $recettes = $this->getAllRecette();
+		echo json_encode($recettes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 	}
 
     public function getRecetteByTitle($searchTerm): array
@@ -50,6 +53,14 @@ class RecetteController
 
         // Filtre les recettes qui commencent par le terme de recherche
         $filteredRecettes = array_filter($recettes, function ($recette) use ($searchTerm) {
+            if (stripos($recette['name'], $searchTerm) === 0)
+            {
+                return true;
+            }
+            if (isset($recette['nameFR']) && stripos($recette['name'], $searchTerm) === 0)
+            {
+                return true;
+            }
             return stripos($recette['name'], $searchTerm) === 0; // Si le titre commence par $searchTerm (case-insensitive)
         });
 
@@ -200,7 +211,7 @@ class RecetteController
         $originalURL    = "";
     
         // Valider les champs principaux
-        if (!$nameRecipe || !$nameAuthor || !$without || !$ingredient || !$steps || !$imageURL) {
+        if (!$nameRecipe || !$nameAuthor || !$without || !$ingredient || !$steps) {
             http_response_code(400);
             echo json_encode(['error' => 'Missing required fields']);
             return;
@@ -255,6 +266,60 @@ class RecetteController
         http_response_code(200);
         file_put_contents($this->filePath, json_encode($recipes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
+
+    public function handlePostLikeRecipe(array $params)
+    {
+       $idRecipe    = $params['id_recipe'];
+       $idUser      = $params['id_user'];
+
+       $content     = file_get_contents($this->filePathLike);
+       $dejaLike    = false;
+       $allLikes    = $this->getAllLike();
+
+       if (isset($allLikes[$idRecipe])) 
+       {
+           if (in_array($idUser, $allLikes[$idRecipe]['likes'])) 
+           {
+               $allLikes[$idRecipe]["likes"] = array_values(array_diff($allLikes[$idRecipe]["likes"], [$idUser]));
+               $message = "Unlike";
+           }
+           else
+           {
+               $allLikes[$idRecipe]['likes'][] = $idUser;
+               $message = "Like ajouté";
+           }
+       }
+       else 
+       {
+           // 🆕 Ajouter une nouvelle recette avec le premier like
+           $allLikes[$idRecipe] = ["likes" => [$idUser]];
+           $message = "Nouvelle recette likée";
+       }
+       
+       // 💾 Sauvegarde dans le fichier JSON
+       file_put_contents($this->filePathLike, json_encode($allLikes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+       
+       http_response_code(201);
+       echo json_encode(["success" => true, "message" => $message]);       
+    }
+
+    public function handleGetLike()
+    {
+        http_response_code(200);
+		header('Content-Type: application/json; charset=utf-8');
+        $likes = $this->getAllLike();
+		echo json_encode($likes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getAllLike()
+    {
+        if (!file_exists($this->filePathLike)) {
+			return [];
+		}
+
+		$content = file_get_contents($this->filePathLike);
+		return json_decode($content, true) ?? [];
+    }
     
     public function getRecipeByID($idRecipe)
     {
@@ -292,11 +357,15 @@ class RecetteController
 		file_put_contents($this->filePath, json_encode($recettes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 
-    /*
-    public function handleGetTraduireRecipe()
-    {
-        
-    }
-    */
+   public function handleGetTranslateRecipe(array $params)
+   {
+        header('Content-Type: application/json; charset=utf-8');
+        $idRecipe = $params['id_recipe'];
+        $recipe = $this->getRecipeByID($idRecipe);
+
+        echo json_encode(["message" => "changement de page réussi",
+                         "recipe" => $recipe, 
+                         "redirect" => "traductionRecette.html"]);
+   }
 
 }
