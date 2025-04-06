@@ -22,14 +22,15 @@ $router->register('POST', '/register', [$authController, 'handleRegister']); //f
 $router->register('POST', '/login', [$authController, 'handleLogin']); //fonctionne
 $router->register('POST', '/logout', [$authController, 'handleLogout']); 
 
-$router->register('GET', '/role/ask/{id_user}', [$roleController, 'handlePostRole']);//fonctionne
-$router->register('POST', '/role/accept/{id_user}/{id_userAsking}', [$roleController, 'handlePostAcceptRole']);//fonctionne
+$router->register('POST', '/role/ask', [$roleController, 'handlePostRole']);//fonctionne
+$router->register('POST', '/role/accept/{id_user}', [$roleController, 'handlePostAcceptRole']);//fonctionne
 
 $router->register('GET', '/recipe', [$recetteController, 'handleGetRecipesRequest']);//fonctionne
 $router->register('GET', '/recipe/search/{search_param}', [$recetteController, 'handleGetRecipesSearchNewRequest']);//fonctionne
 $router->register('GET', '/recipe/detail/{id_recipe}', [$recetteController, 'handleGetRecipesCardDetail']);//fonctionne
 $router->register('POST', '/recipe/add/{id_user}', [$recetteController, 'handlePostRecetteRequest']);//fonctionne
 $router->register('POST', '/recipe/modify/{id_recipe}', [$recetteController, 'handlePostRecipeModifyRequest']);//fonctionne
+$router->register('GET', '/translate/recipe/{id_recipe}', [$recetteController, 'handleGetTranslateRecipe']);
 
 $router->register('POST', '/like/recipe/{id_recipe}/{id_user}', [$recetteController, 'handlePostLikeRecipe']);//fonctionne
 $router->register('GET', '/like', [$recetteController, 'handleGetLike']);//fonctionne

@@ -10,16 +10,25 @@
 		<nav class="navbar">
 			<a href="#" class="logo">Recipe Book</a>
 			<ul class="nav-links">
+				<li><a href="demanderRole.html">Demander Rôle</a></li>
 				<li><a href="listeUtilisateur.html">Liste Utilisateur</a></li>
 				<li><a href="index.html">Liste Recette</a></li>
-				<li><a id="deconnexion">Déconnexion</a>
+				<li><a id="deconnexion">Déconnexion</a></li>
 			</ul>
 		</nav>
 		
 		<div class="enteteRecherche">
-			<button onClick="formAjouter()" class="ajouterRecette" id="ajouterRecette"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
-				<path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
-				</svg></button>
+			<div class="left-controls">
+				<label class="toggle-translate">
+					<input type="checkbox" id="translateCheckbox">
+					<span class="slider"></span> Traduire en français
+				</label>
+				<button onClick="formAjouter()" class="ajouterRecette" id="ajouterRecette">
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2"/>
+					</svg>
+				</button>
+			</div>
 			<div class="search-container">
 				<input type="search" placeholder="Chercher une recette..." class="search-input" id="searchInput">
 				<button id="rechercherRecette">
@@ -27,28 +36,26 @@
 						<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
 					</svg>
 				</button>  
-			</div>	
+			</div>  
 		</div>
 		<div id="recette-list"></div>
 
 		<div id="formulaireModal" class="modal">
 			<div class="contenuFormulaire">
-				<div id="formulaireRecette">
-
-				</div>
+				<div id="formulaireRecette"></div>
 			</div>
 		</div>
 		
 		<div id="recette-modal" class="modal">
 			<div class="modal-content">
-				<div class="recette-header" >
-					<span class="close" >×</span> 
+				<div class="recette-header">
+					<span class="close">×</span> 
 				</div>
 				<div id="recetteDetail">
 					<!-- Détails de la recette affichés ici -->
 				</div>
 			</div>
-		</div>		
+		</div>
 		<script src="script.js"></script>
 	</body>
 </html>

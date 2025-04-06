@@ -1,3 +1,90 @@
+/* css pour le page demanderRole*/
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: white;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h2 {
+    color: #333;
+}
+
+.role-buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.askRole {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.chef {
+    background-color: #007BFF;
+    color: white;
+}
+
+.admin {
+    background-color: #28a745;
+    color: white;
+}
+
+.trad {
+    background-color: #ffc107;
+    color: white;
+}
+
+.askRole:hover {
+    opacity: 0.8;
+}
+
+/*Page index.php*/
+
 form {
 	width: fit-content;
 	display: flex;
@@ -25,6 +112,56 @@ form {
     transition: all 0.3s ease-in-out;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
+
+.left-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Style du bouton switch */
+.toggle-translate {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    cursor: pointer;
+    gap: 5px;
+    font-weight: bold;
+}
+
+.toggle-translate input {
+    display: none;
+}
+
+.toggle-translate .slider {
+    width: 40px;
+    height: 20px;
+    background: #ccc;
+    border-radius: 50px;
+    position: relative;
+    transition: 0.3s;
+}
+
+.toggle-translate .slider::before {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 50%;
+    top: 1px;
+    left: 2px;
+    transition: 0.3s;
+}
+
+.toggle-translate input:checked + .slider {
+    background: #28a745;
+}
+
+.toggle-translate input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
 .enteteRecherche{
     padding-top: 20px;
     position: relative;
@@ -66,6 +203,8 @@ input[type="text"], input[type="password"] {
 }
 
 .recette-card {
+    position: relative;
+    padding-bottom: 60px;
     text-align: center;
     box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.2);
     border-radius: 15px;
@@ -500,5 +639,78 @@ body.modal-open #recette-list {
     background-color: #c82333;
 }
 
+.translateButton {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #6C63FF;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.translateButton:hover {
+    background-color: #574bff;
+    transform: scale(1.05);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.translateButton:active {
+    transform: scale(0.95);
+}
 
 
+.recette-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 40px;
+}
+
+/* Partie de gauche : anglais */
+.recette-anglais {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    background-color: #f9f9f9;
+}
+
+/* Partie de droite : français */
+.recette-française {
+    flex: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    background-color: #f0f4ff;
+}
+
+/* Optionnel : rendre responsive */
+@media (max-width: 768px) {
+    .recette-container {
+        flex-direction: column;
+    }
+}
+
+.buttonEnregistrer {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #6C63FF;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}

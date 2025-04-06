@@ -125,6 +125,9 @@ class AuthController
 
 	public function handleLogout(): void
 	{
+		if(isset($_SESSION['user'])) {
+			unset($_SESSION['user']);
+		}
 		http_response_code(200);
 		echo json_encode(['message' => 'Logged out successfully',
 							'redirect' => 'connexion.html']);

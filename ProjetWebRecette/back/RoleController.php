@@ -24,54 +24,73 @@ class RoleController
 		return json_decode($content, true) ?? [];
     }
 
-    public function handlePostRole(array $params): void
+    public function handlePostRole(): void 
     {
-        // $params['id_user'] contient la valeur extraite de l'URL
-        $userId = $params['id_user'];
-
-        $userAsking = $this->authController->getUserById($userId);
-        if($userAsking['role'] == "cuisinier")
-        {
-            $this->askRole($userAsking);
-        }
+        header('Content-Type: application/json');
         
-        echo json_encode(['success' => true, 'userId' => $userId]);
-
-    }
-    public function handlePostAcceptRole(array $params): void 
-    {
-        if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            if (isset($_POST["role"])) {
-                $role = $_POST["role"]; // Récupère le rôle envoyé par JavaScript
-                echo json_encode(["message" => "Rôle reçu: $role"]);
-            } else {
-                http_response_code(400);
-                echo json_encode(["error" => "Aucun rôle reçu"]);
-                return; // Stoppe l'exécution si le rôle est manquant
-            }
-        } else {
-            http_response_code(405);
-            echo json_encode(["error" => "Méthode non autorisée"]);
+        // Récupérer les données POST, peu importe le Content-Type
+        $input = file_get_contents('php://input');
+        parse_str($input, $postData);
+        
+        // Vérifier que les données nécessaires sont présentes
+        if (!isset($postData['id_user']) || !isset($postData['role'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Missing required fields']);
             return;
         }
-    
-        // Vérifie que les paramètres requis existent bien
-        if (!isset($params['id_user']) || !isset($params['id_userAsking'])) {
+        
+        $userId = $postData['id_user'];
+        $role = $postData['role'];
+            
+        $userAsking = $this->authController->getUserById($userId);
+        if ($userAsking && $userAsking['role'] == "cuisinier") {
+            $demandeEnvoyee = $this->askRole($userAsking, $role);
+            if ($demandeEnvoyee) {
+                echo json_encode(['message' => 'Demande envoyée avec succès', 'redirect' => 'index.html']);
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'une demande existe déjà']);
+            }
+        } else {
+            http_response_code(403);
+            echo json_encode(['error' => 'Utilisateur non autorisé']);
+        }
+    }
+
+    public function handlePostAcceptRole(array $params): void 
+    {
+        header('Content-Type: application/json');
+        
+        // Récupérer les données POST, peu importe le Content-Type
+        $input = file_get_contents('php://input');
+        parse_str($input, $postData);
+        
+        // Vérifier que les données nécessaires sont présentes
+        if (!isset($postData['role']) || !isset($postData['id_userAsking'])) {
             http_response_code(400);
             echo json_encode(["error" => "Paramètres manquants"]);
             return;
         }
     
+        // Vérifie que les paramètres requis existent bien
+        if (!isset($params['id_user'])) {
+            http_response_code(400);
+            echo json_encode(["error" => "Paramètres manquants"]);
+            return;
+        }
+    
+        $role           = $postData['role'];
         $userId         = $params['id_user'];
-        $userIdAsking   = $params['id_userAsking'];
+        $userIdAsking   = $postData['id_userAsking'];
     
         // Vérification du rôle de l'utilisateur
         $user = $this->authController->getUserById($userId);
-        if ($user && $user['role'] === "administrateur") {
+        if ($user['role'] === "administrateur") {
             $demande = $this->getDemandeByIdUser($userIdAsking);
             if (!empty($demande)) {
                 $this->acceptRole($demande, $userIdAsking, $role);
-                echo json_encode(["message" => "Rôle accepté avec succès"]);
+                http_response_code(200);
+                echo json_encode(["message" => "Rôle accepté avec succès", "redirect" => "index.html"]);
             } else {
                 http_response_code(404);
                 echo json_encode(["error" => "Aucune demande trouvée"]);
@@ -86,30 +105,35 @@ class RoleController
     private function getDemandeByIdUser(string $idUser)
     {
         $demandes = $this->getAllDemande();
-        foreach($demandes as $demande)
-        {
-            if($demande['id_user'] == $idUser)
-            {
+        $demandeResearch = null; 
+        
+        foreach($demandes as $demande) {
+            if($demande['id_user'] == $idUser) {
                 $demandeResearch = $demande;
+                break; 
             }
         }
-
+        
         return $demandeResearch;
     }
 
-    private function askRole(array $user)
+    private function askRole(array $user, string $role): bool
     {
-
+        $demandes = $this->getAllDemande();
+        $demande = $this->getDemandeByIdUser($user['id_user']);
+        if(!empty($demande))
+        {
+            return false;
+        }
         $ask = [
             "id_demande" => uniqid(),
             "id_user" => $user['id_user'],
-            "role" => "traducteur",
+            "role" => $role,
         ];
-
-        $demandes = $this->getAllDemande();
         $demandes[] = $ask;
 
         file_put_contents($this->filePathDemande, json_encode($demandes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        return true;
     }
 
     private function acceptRole(array $demande, string $userIdAsking, string $role)
@@ -130,8 +154,5 @@ class RoleController
 
         file_put_contents($this->filePathDemande, json_encode($demandes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
         file_put_contents($filePath, json_encode($users, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        echo json_encode(["success" => true, "message" => "Rôle mis à jour"]);
-        http_response_code(200);
-
     }
 }

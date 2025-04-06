@@ -675,7 +675,7 @@
     {
         "id_recette": "67dc295b26eb7",
         "name": "Crock Pot Roast",
-        "nameFR": "",
+        "nameFR": "test",
         "nameAuthor": "67dbf72c672b5",
         "without": [
             "NoGluten",
@@ -708,14 +708,12 @@
                 "type": "Drinks"
             }
         ],
-        "ingredientsFR": "",
         "steps": [
             "Place beef roast in crock pot.",
             "Mix the dried mixes together in a bowl and sprinkle over the roast.",
             "Pour the water around the roast.",
             "Cook on low for 7-9 hours."
         ],
-        "stepsFR": "",
         "imageURL": "http:\/\/img.sndimg.com\/food\/image\/upload\/w_266\/v1\/img\/recipes\/27\/20\/8\/picVfzLZo.jpg",
         "originalURL": ""
     },

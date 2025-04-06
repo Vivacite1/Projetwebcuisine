@@ -53,6 +53,14 @@ class RecetteController
 
         // Filtre les recettes qui commencent par le terme de recherche
         $filteredRecettes = array_filter($recettes, function ($recette) use ($searchTerm) {
+            if (stripos($recette['name'], $searchTerm) === 0)
+            {
+                return true;
+            }
+            if (isset($recette['nameFR']) && stripos($recette['name'], $searchTerm) === 0)
+            {
+                return true;
+            }
             return stripos($recette['name'], $searchTerm) === 0; // Si le titre commence par $searchTerm (case-insensitive)
         });
 
@@ -349,11 +357,15 @@ class RecetteController
 		file_put_contents($this->filePath, json_encode($recettes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 
-    /*
-    public function handleGetTraduireRecipe()
-    {
-        
-    }
-    */
+   public function handleGetTranslateRecipe(array $params)
+   {
+        header('Content-Type: application/json; charset=utf-8');
+        $idRecipe = $params['id_recipe'];
+        $recipe = $this->getRecipeByID($idRecipe);
+
+        echo json_encode(["message" => "changement de page réussi",
+                         "recipe" => $recipe, 
+                         "redirect" => "traductionRecette.html"]);
+   }
 
 }

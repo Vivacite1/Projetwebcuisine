@@ -122,36 +122,37 @@ async function afficherUser(users, demandes) {
 
 async function accepterDemande(idUserAsking, role) {
     try {
-        if (!idUserAsking || !role) {
-            console.error("Erreur : ID utilisateur ou rôle manquant !");
-            return;
-        }
+        const idUser = localStorage.getItem("id_user");
 
-        console.log("Envoi de la demande avec ID :", idUserAsking, "et rôle :", role);
+        const params = new URLSearchParams();
+        params.append("role", role);
+        params.append("id_userAsking", idUserAsking);
 
-        const formData = new FormData();
-        formData.append("role", role);
-
-        const url = `${webServerAddress}/role/accept/67dbf72c672b5/${encodeURIComponent(idUserAsking)}`;
-        console.log("URL utilisée pour fetch:", url);
-
-        const response = await fetch(url, {
+        const response = await fetch(`${webServerAddress}/role/accept/${idUser}`, {
             method: "POST",
-            body: formData, // FormData au lieu de URLSearchParams
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: params,
         });
-
-        const data = await response.json();
+        console.log("Demande acceptée");
 
         if (response.ok) {
-            console.log("Demande acceptée avec succès :", data);
-            return data;
+            const result = await response.json();
+            console.log("Demande acceptée avec succès :", result);
+            const users      = await getUsers();
+            const demandes   = await getDemandes();
+            await afficherUser(users, demandes);
+            return result;
         } else {
-            console.error("Erreur lors de la requête :", response.status, data.error);
+            const errorText = await response.text();
+            console.error("Échec de la demande:", response.status, response.statusText, errorText);
         }
     } catch (error) {
         console.error("Une erreur est survenue :", error);
     }
 }
+
 
 
 

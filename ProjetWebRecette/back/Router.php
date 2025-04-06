@@ -25,11 +25,42 @@ class Router
      * @param string $path Actual request path
      * @return array|false Returns parameters array if matched, false otherwise
      */
+    // private function matchRoute(string $pattern, string $path): array|false
+    // {
+    //     // Convertir le modèle de route en expression régulière
+    //     $patternParts = explode('/', trim($pattern, '/'));
+    //     $pathParts = explode('/', trim($path, '/'));
+        
+    //     // Vérifier si le nombre de segments correspond
+    //     if (count($patternParts) !== count($pathParts)) {
+    //         return false;
+    //     }
+        
+    //     $params = [];
+        
+    //     // Comparer chaque segment
+    //     foreach ($patternParts as $index => $part) {
+    //         // Vérifier si c'est un paramètre dynamique
+    //         if (preg_match('/^\{([a-zA-Z0-9_]+)\}$/', $part, $matches)) {
+    //             // Extraire le nom du paramètre et sa valeur
+    //             $params[$matches[1]] = $pathParts[$index];
+    //         } elseif ($part !== $pathParts[$index]) {
+    //             // Si ce n'est pas un paramètre et que les segments ne correspondent pas
+    //             return false;
+    //         }
+    //     }
+        
+    //     return $params;
+    // }
     private function matchRoute(string $pattern, string $path): array|false
     {
+        // Nettoyer les chemins
+        $pattern = trim($pattern, '/');
+        $path = trim($path, '/');
+        
         // Convertir le modèle de route en expression régulière
-        $patternParts = explode('/', trim($pattern, '/'));
-        $pathParts = explode('/', trim($path, '/'));
+        $patternParts = explode('/', $pattern);
+        $pathParts = explode('/', $path);
         
         // Vérifier si le nombre de segments correspond
         if (count($patternParts) !== count($pathParts)) {
@@ -43,7 +74,9 @@ class Router
             // Vérifier si c'est un paramètre dynamique
             if (preg_match('/^\{([a-zA-Z0-9_]+)\}$/', $part, $matches)) {
                 // Extraire le nom du paramètre et sa valeur
-                $params[$matches[1]] = $pathParts[$index];
+                $paramName = $matches[1];
+                $paramValue = urldecode($pathParts[$index]); // Décoder les caractères spéciaux
+                $params[$paramName] = $paramValue;
             } elseif ($part !== $pathParts[$index]) {
                 // Si ce n'est pas un paramètre et que les segments ne correspondent pas
                 return false;

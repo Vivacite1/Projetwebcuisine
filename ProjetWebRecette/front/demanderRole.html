@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Page perso</title>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+        <nav class="navbar">
+            <a href="index.html" class="logo">Recipe Book</a>
+            <ul class="nav-links">
+                <li><a href="listeUtilisateur.html">Liste Utilisateur</a></li>
+                <li><a href="index.html">Liste Recette</a></li>
+                <li><a id="deconnexion" class="deconnexion">Déconnexion</a></li>
+            </ul>
+        </nav>
+    
+        <div class="container">
+            <h2>Demander un rôle</h2>
+            <p>Sélectionnez un rôle à demander :</p>
+            <div class="role-buttons">
+                <button id="btn-chef" class="askRole chef">Demander le rôle de Chef</button>
+                <button id="btn-admin" class="askRole admin">Demander le rôle d'Administrateur</button>
+                <button id="btn-traducteur" class="askRole trad">Demander le rôle de Traducteur</button>
+            </div>
+        </div>
+        <script src="demandeRole.js"></script>
+    </body>
+</html>

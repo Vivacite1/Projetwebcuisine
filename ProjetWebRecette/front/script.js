@@ -4,6 +4,7 @@
 
 const webServerAddress = "http://localhost:8080";
 
+const pageActuel = window.location.pathname;
 // Trigger the getComments function when the form is submitted
 const form = document.getElementById("post-comment");
 if (form) {
@@ -30,8 +31,21 @@ if (buttonSupprimer) {
 const buttonDeconnexion = document.getElementById("deconnexion");
 if (buttonDeconnexion) {
 	buttonDeconnexion.addEventListener("click", async () => {
-		const success = await deconnexionUser();
+		await deconnexionUser();
 	});
+}
+
+const checkbox = document.getElementById("translateCheckbox");
+if (checkbox){
+	checkbox.addEventListener("change", async function(){
+		const searchTerm = document.getElementById("searchInput").value.trim();
+		if(searchTerm.length !== 0){
+			const recettes = await getRecettesByLettre(searchTerm);
+			const likes 	= await getLike(); 
+			const translate = document.getElementById("translateCheckbox").checked;
+			await afficherRecette(recettes,likes,translate);
+		}
+	})
 }
 
 const button = document.getElementById("get-comments");
@@ -73,31 +87,39 @@ if (searchRecipe){
 			const recettes = await getRecettesByLettre(searchTerm);
 			console.log("Recettes filtrées :", recettes);
 			const likes 	= await getLike(); 
-			await afficherRecette(recettes,likes);
+			const translate = document.getElementById("translateCheckbox").checked;
+			await afficherRecette(recettes,likes,translate);
 		}else{ 
 			const recetteListeDiv = document.getElementById("recette-list");
 			recetteListeDiv.innerHTML = ""; 
 		}
 	});
 }
-const detailRecette = document.getElementById("recette-list")
-detailRecette.addEventListener("click", async (event) => {
-    let target = event.target;
 
-    // Vérifie si on clique sur une image ou un titre
-    if (target.tagName === "IMG" || target.tagName === "H2") {
-		const idRecipe = target.closest(".recette-card").querySelector("#idRecipe").textContent.trim();        
-        try {
-            const recette = await getRecettesById(idRecipe); // Récupération des données
-			console.log("test recette : ",recette);
-			const likes = await getLike();
-            await afficherDetailRecette(recette,likes);
-            await ouvrirModale();
-        } catch (error) {
-            console.error("Erreur lors de la récupération de la recette :", error);
-        }
-    }
-});
+
+const detailRecette = document.getElementById("recette-list")
+if(detailRecette)
+{
+	detailRecette.addEventListener("click", async (event) => {
+		let target = event.target;
+		// Vérifie si on clique sur une image ou un titre
+		if (target.tagName === "IMG" || target.tagName === "H2") {
+			const idRecipe = target.closest(".recette-card").querySelector("#idRecipe").textContent.trim();        
+			try {
+				const recette = await getRecettesById(idRecipe); // Récupération des données
+				console.log("test recette : ",recette);
+				const likes = await getLike();
+				const translate = document.getElementById("translateCheckbox").checked;
+				await afficherDetailRecette(recette,likes, translate);
+				await ouvrirModale();
+			} catch (error) {
+				console.error("Erreur lors de la récupération de la recette :", error);
+			}
+		}
+	});
+}
+
+
 
 /**
  * This function sends a POST request to the server with the form data to add a new comment.
@@ -300,7 +322,7 @@ async function getRecette() {
  * @param {*} allRecettes :
  * @param {*} likes 
  */
-async function afficherRecette(allRecettes,likes) {
+async function afficherRecette(allRecettes,likes,translate) {
     const listeRecette = allRecettes;
 	const listeLikes	= likes
     const recetteListeDiv = document.getElementById("recette-list");
@@ -308,7 +330,9 @@ async function afficherRecette(allRecettes,likes) {
     // On vide le contenu précédent
     recetteListeDiv.innerHTML = ""; 
 
+
     listeRecette.forEach(recette => {    
+		
         // Création d'un conteneur pour chaque recette
         const recetteDiv = document.createElement("div");
         recetteDiv.classList.add("recette-card"); // Ajoute une classe pour le CSS
@@ -320,22 +344,37 @@ async function afficherRecette(allRecettes,likes) {
         // Titre de la recette
         const titre = document.createElement("h2");
 		titre.id = "detail-image";
-        titre.textContent = recette.name;
 
         // Auteur
         const auteur = document.createElement("p");
-        auteur.textContent = `Auteur: ${recette.nameAuthor}`;
 
         // Description (Sans quoi ?)
         const description = document.createElement("p");
-        description.textContent = `Sans: ${recette.without}`;
 
         // Image de la recette
         const image = document.createElement("img");
         image.src = recette.imageURL;
-        image.alt = `Image de ${recette.name}`;
         image.classList.add("recette-image"); // Ajoute une classe pour le CSS
 		image.id = "detail-image";
+
+		const tradButton = document.createElement("button");
+		tradButton.classList.add("translateButton");
+		tradButton.id = "tradButton";
+		
+		if(translate)
+		{
+			titre.textContent = recette.nameFR;
+			auteur.textContent = `Auteur: ${recette.nameAuthor}`;
+			description.textContent = `Sans: ${recette.without}`;
+			image.alt = `Image de ${recette.name}`;
+			tradButton.textContent = "traduire";
+		}else{
+			titre.textContent = recette.name;
+			auteur.textContent = `Author: ${recette.nameAuthor}`;
+			description.textContent = `Without: ${recette.without}`;
+			image.alt = `Image of ${recette.name}`;
+			tradButton.textContent = "translate";
+		}
 
 		// Initialisation du compteur de likes
 		let nombreLikes = 0;
@@ -365,13 +404,22 @@ async function afficherRecette(allRecettes,likes) {
 		}
 		likeButton.dataset.recipeId = recette.id_recette; // Stocke l'ID de la recette dans un attribut data-*
 
+		if(tradButton)
+		{
+			tradButton.addEventListener("click", async () => {
+				const idRecipe = recette.id_recette;
+				await traduireRecette(idRecipe);
+			})
+		}
+		
         // Écouteur d'événement sur le bouton Like
         likeButton.addEventListener("click", async () => {
             await ajouteLike(recette.id_recette); // Appelle ajouteLike avec l'ID de la recette
-			document.getElementById("searchInput").value = "";
-            const recipes = await getRecette();
+			const searchInput = document.getElementById("searchInput").value;
+            const recipes = await getRecettesByLettre(searchInput);
             const likes = await getLike();
-            await afficherRecette(recipes, likes);
+			const translate = document.getElementById("translateCheckbox").checked;
+            await afficherRecette(recipes, likes,translate);
         });
 
         // Ajout des éléments au conteneur de recette
@@ -381,6 +429,7 @@ async function afficherRecette(allRecettes,likes) {
         recetteDiv.appendChild(auteur);
         recetteDiv.appendChild(description);
 		recetteDiv.appendChild(likeButton);
+		recetteDiv.appendChild(tradButton);
 
         // Ajout au conteneur principal
         recetteListeDiv.appendChild(recetteDiv);
@@ -416,6 +465,7 @@ async function ajouteLike(idRecipe)
         console.error("Erreur survenue:", error);
     }
 }
+
 async function getRecettesByLettre(searchTerm) {
     try {
         const response = await fetch(`${webServerAddress}/recipe/search/`+searchTerm, {
@@ -476,34 +526,56 @@ async function getRecettesById(idRecipe)
     }
 }
 
-async function afficherDetailRecette(recette,likes) {
+async function afficherDetailRecette(recette,likes,translate) {
+	
 	if (!recette) return;
 	const listeLikes = likes;
 	const recetteDetailDiv = document.getElementById("recetteDetail");
 
 	const recetteData = recette;
-	const titreRecette = document.createElement("h2");
-	console.log ("recette : ", recetteData);
+	// const titreRecette = document.createElement("h2");
 
-	titreRecette.textContent = recetteData.name;
-	console.log ("recette : ", recetteData.name);
-	recetteDetailDiv.innerHTML = `
-		<h2>${recetteData.name}</h2>
-		<img src="${recetteData.imageURL}" alt="Image de ${recetteData.name}" class="recette-image">
+	if (translate)
+	{
+		// titreRecette.textContent = recetteData.nameFR;
+		recetteDetailDiv.innerHTML = `
+		<h2>${recetteData.nameFR}</h2>
+		<img src="${recetteData.imageURL}" alt="Image de ${recetteData.nameFR}" class="recette-image">
 		<p><strong>Auteur :</strong> ${recetteData.nameAuthor}</p>
 		<p><strong>Sans :</strong> ${recetteData.Without ? recetteData.Without.join(", ") : "Aucune restriction"}</p>
 
 		<h3>Ingrédients :</h3>
 		<ul>
-			${recetteData.ingredients?.map(ing => `<li>${ing.quantity} ${ing.name ?? "Ingrédient inconnu"} (${ing.type})</li>`).join("") || "<li>Aucun ingrédient</li>"}
+			${recetteData.ingredientsFR?.map(ing => `<li>${ing.quantity} ${ing.name ?? "Ingrédient inconnu"} (${ing.type})</li>`).join("") || "<li>Aucun ingrédient</li>"}
 		</ul>
 
 		<h3>Étapes :</h3>
 		<ol>
-			${recetteData.steps?.map(step => `<li>${step}</li>`).join("") || "<li>Aucune étape</li>"}
+			${recetteData.stepsFR?.map(step => `<li>${step}</li>`).join("") || "<li>Aucune étape</li>"}
 		</ol>
 		<button id="detailBouton" class="like-button" > ❤️ ${listeLikes[recetteData.id_recette].likes.length} </button>
 	`;
+	}else
+	{
+		// titreRecette.textContent = recetteData.name;
+		recetteDetailDiv.innerHTML = `
+		<h2>${recetteData.name}</h2>
+		<img src="${recetteData.imageURL}" alt="Image de ${recetteData.name}" class="recette-image">
+		<p><strong>Author :</strong> ${recetteData.nameAuthor}</p>
+		<p><strong>Without :</strong> ${recetteData.Without ? recetteData.Without.join(", ") : "No restrictions"}</p>
+
+		<h3>Ingredients :</h3>
+		<ul>
+			${recetteData.ingredients?.map(ing => `<li>${ing.quantity} ${ing.name ?? "Ingrédient inconnu"} (${ing.type})</li>`).join("") || "<li>Aucun ingrédient</li>"}
+		</ul>
+
+		<h3>Steps :</h3>
+		<ol>
+			${recetteData.steps?.map(step => `<li>${step}</li>`).join("") || "<li>No steps</li>"}
+		</ol>
+		<button id="detailBouton" class="like-button" > ❤️ ${listeLikes[recetteData.id_recette].likes.length} </button>
+	`;
+	}
 
 	let userLiked = false; 
 	if (listeLikes[recetteData.id_recette])
@@ -528,22 +600,24 @@ async function afficherDetailRecette(recette,likes) {
 		await ajouteLike(recetteData.id_recette); 
 		const recipe = await getRecettesById(recetteData.id_recette);
 		const likes = await getLike();
-		await afficherDetailRecette(recipe, likes);
+		const translate = document.getElementById("translateCheckbox").checked;
+		await afficherDetailRecette(recipe, likes, translate);
 	});
 
 	//si l'utilisateur clique sur la croix
 	const fermerModal = document.querySelector(".close");
 	fermerModal.addEventListener("click", fermerModale);
 
-	//si l'utilisateur clique a coté de la fiche recette
 	window.addEventListener("click", async (event) => {
 		console.log("user est entré");
 		if (event.target === document.getElementById("recette-modal")) {
 			fermerModale();
 			const likes = await getLike();
 			const searchTerm = document.getElementById("searchInput").value;
-			const recipes = await getRecettesByLettre(searchTerm); 
-			await afficherRecette(recipes,likes);
+			const recipes = await getRecettesByLettre(searchTerm);
+			console.log(recipes);
+			const translate = document.getElementById("translateCheckbox").checked;
+			await afficherRecette(recipes,likes,translate);
 		}
 	});
 }
@@ -838,6 +912,34 @@ async function deconnexionUser() {
 		} else {
 			console.error(
 				"Echec de la déconnexion:",
+				response.status,
+				response.statusText
+			);
+		}
+	} catch (error) {
+		console.error("Error occurred:", error);
+	}
+}
+
+async function traduireRecette(idRecipe)
+{
+	try {
+		const response = await fetch(`${webServerAddress}/translate/recipe/`+idRecipe, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+		
+		if (response.ok) {
+			const result = await response.json();
+			console.log(JSON.stringify(result.recipe));
+			sessionStorage.setItem("recetteTrad", JSON.stringify(result.recipe));
+			window.location.href = result.redirect;
+			return result;
+		} else {
+			console.error(
+				"Echec du changement de page",
 				response.status,
 				response.statusText
 			);
