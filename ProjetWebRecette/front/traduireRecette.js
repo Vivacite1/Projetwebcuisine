@@ -32,20 +32,34 @@ async function afficherLesRecettes(recette) {
 	`;
 
 	// --- Partie FRANÇAISE ---
-	let titreFR = recette.nameFR && recette.nameFR.trim()
-		? `<h2>${recette.nameFR}</h2>`
-		: `<h2><input type="text" placeholder="Nom de la recette en français" id="input-nameFR" /></h2>`;
-
+	let titreFR;
+	console.log(recette.nameFR)
+	if(!recette.nameFR)
+	{
+		titreFR =  `<h2><input type="text" placeholder="Nom de la recette en français" id="input-nameFR" /></h2>`;
+	}else {
+		titreFR = `<h2>${recette.nameFR}</h2>`;
+	}
 	// Ingrédients FR
 	let ingredientsFR = "";
-	recette.ingredientsFR?.forEach((ing, i) => {
-		if (!ing.name || ing.name.trim() === "") {
-			ingredientsFR += `<li>${ing.quantity} <input type="text" placeholder="Traduction de l'ingrédient" id="ingredient-${i}" /></li>`;
-		} else {
-			ingredientsFR += `<li>${ing.quantity} ${ing.name}</li>`;
-		}
-	});
-
+	if(!recette.ingredientsFR)
+	{
+		recette.ingredients.forEach((ing,i) => {
+			ingredientsFR += `<li>${ing.quantity} <input type="text" placeholder="Traduction de l'ingrédient" id="ingredient-${i}" />
+			                                      <input type="text" placeholder="Traduction du type id="type-${i}" /></li>`;
+		});
+	}else
+	{
+		recette.ingredientsFR?.forEach((ing, i) => {
+			if (!ing.name) {
+				ingredientsFR += `<li>${ing.quantity} <input type="text" placeholder="Traduction de l'ingrédient" id="ingredient-${i}" />
+			                                      <input type="text" placeholder="Traduction du type" id="type-${i}" /></li>`;
+			} else {
+				ingredientsFR += `<li>${ing.quantity} ${ing.name}</li>`;
+			}
+		});
+	}
+	
 	// Étapes FR
 	let stepsFR = "";
 	const totalStepsEN = recette.steps?.length || 0;

@@ -700,9 +700,6 @@ body.modal-open #recette-list {
 }
 
 .buttonEnregistrer {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
     background-color: #6C63FF;
     color: white;
     font-size: 16px;
