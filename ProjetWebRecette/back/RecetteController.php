@@ -367,5 +367,44 @@ class RecetteController
                          "recipe" => $recipe, 
                          "redirect" => "traductionRecette.html"]);
    }
+ public function validateRecipe() {
+    // Forcer l'envoi du Content-Type JSON dès le début
+    header('Content-Type: application/json; charset=utf-8');
+    
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        // Récupérer l'ID de la recette depuis le formulaire POST
+        $recipeId = $_POST['id_recipe'] ?? null;
+        if (!$recipeId) {
+            http_response_code(400);
+            echo json_encode(['status' => 'error', 'message' => 'Identifiant de recette manquant']);
+            return;
+        }
+        // Lire toutes les recettes
+        $recettes = $this->getAllRecette();
+        $found = false;
+        // Parcourir les recettes pour trouver celle qui correspond et la marquer comme validée
+        foreach ($recettes as &$recette) {
+            if ($recette['id_recette'] == $recipeId) {
+                $recette['validated'] = true;
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            http_response_code(404);
+            echo json_encode(['status' => 'error', 'message' => 'Recette non trouvée']);
+            return;
+        }
+        // Sauvegarder les recettes mises à jour dans le fichier JSON
+        if (file_put_contents($this->filePath, json_encode($recettes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)) === false) {
+            http_response_code(500);
+            echo json_encode(['status' => 'error', 'message' => 'Erreur lors de la sauvegarde']);
+            return;
+        }
+        echo json_encode(['status' => 'success', 'message' => 'Recette validée']);
+    }
+}
+
+
 
 }

@@ -81,7 +81,8 @@
             420
         ],
         "imageURL": "http:\/\/img.sndimg.com\/food\/image\/upload\/w_266\/v1\/img\/recipes\/27\/20\/8\/picVfzLZo.jpg",
-        "originalURL": "http:\/\/www.food.com\/recipe\/to-die-for-crock-pot-roast-27208"
+        "originalURL": "http:\/\/www.food.com\/recipe\/to-die-for-crock-pot-roast-27208",
+        "validated": true
     },
     {
         "id_recette": "45722fae-67b0-44c0-a0cf-51a2462ed51d",

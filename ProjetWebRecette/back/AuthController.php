@@ -97,18 +97,20 @@ class AuthController
 		$users = $this->getAllUsers();
 		$trouve = false;
 		foreach($users as $user)
-		{
-			if ($user['mail'] === $email) {
-				$trouve = true;
-				if (!password_verify($password, $user['password'])) {
-					http_response_code(400);
-					echo json_encode(['message' => 'Mot de passe incorrect'.$user['password'].' : '.$password]);
-					return;
-				}
-				$_SESSION['user'] = $user['id_user'];
-				$userRole = $user['role'];
-			}
-		}
+{
+    if ($user['mail'] === $email) {
+        $trouve = true;
+        if (!password_verify($password, $user['password'])) {
+            http_response_code(400);
+            echo json_encode(['message' => 'Mot de passe incorrect']);
+            return;
+        }
+        $_SESSION['user'] = $user['id_user'];
+        $_SESSION['role'] = $user['role']; // Ajout du rôle dans la session
+        $userRole = $user['role'];
+    }
+}
+
 		if(!$trouve){
 			http_response_code(400);
 			echo json_encode(['message' => 'Utilisateur non trouvé']);

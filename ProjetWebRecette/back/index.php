@@ -26,6 +26,7 @@ $router->register('POST', '/role/ask', [$roleController, 'handlePostRole']);//fo
 $router->register('POST', '/role/accept/{id_user}', [$roleController, 'handlePostAcceptRole']);//fonctionne
 
 $router->register('GET', '/recipe', [$recetteController, 'handleGetRecipesRequest']);//fonctionne
+$router->register('POST', '/recipe/validate', [$recetteController, 'validateRecipe']);
 $router->register('GET', '/recipe/search/{search_param}', [$recetteController, 'handleGetRecipesSearchNewRequest']);//fonctionne
 $router->register('GET', '/recipe/detail/{id_recipe}', [$recetteController, 'handleGetRecipesCardDetail']);//fonctionne
 $router->register('POST', '/recipe/add/{id_user}', [$recetteController, 'handlePostRecetteRequest']);//fonctionne

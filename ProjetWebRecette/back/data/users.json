@@ -28,5 +28,11 @@
         "mail": "albancousin@gmail.com",
         "password": "$2y$12$PbpKQD30giQM.qfU7gzkJ.U0k\/racOEMTV.VmI8ptkZ6vihJYbjya",
         "role": "traducteur"
+    },
+    {
+        "id_user": "67f3be78a198a",
+        "mail": "fiacremitokpe@gmail.com",
+        "password": "$2y$12$Z\/cfgnnjeYnRIDWHNugtsuxZns1kNaYYEJ1g0xbVVN5HYL90yBrau",
+        "role": "administrateur"
     }
 ]

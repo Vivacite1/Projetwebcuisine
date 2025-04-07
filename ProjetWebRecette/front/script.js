@@ -322,119 +322,91 @@ async function getRecette() {
  * @param {*} allRecettes :
  * @param {*} likes 
  */
-async function afficherRecette(allRecettes,likes,translate) {
-    const listeRecette = allRecettes;
-	const listeLikes	= likes
+async function afficherRecette(allRecettes, likes, translate) {
     const recetteListeDiv = document.getElementById("recette-list");
-
     // On vide le contenu précédent
     recetteListeDiv.innerHTML = ""; 
 
-
-    listeRecette.forEach(recette => {    
-		
+    allRecettes.forEach(recette => {    
         // Création d'un conteneur pour chaque recette
         const recetteDiv = document.createElement("div");
-        recetteDiv.classList.add("recette-card"); // Ajoute une classe pour le CSS
+        recetteDiv.classList.add("recette-card");
 
-		const idRecipe = document.createElement("p");
-		idRecipe.id = "idRecipe";
-		idRecipe.textContent = recette.id_recette
+        const idRecipe = document.createElement("p");
+        idRecipe.id = "idRecipe";
+        idRecipe.textContent = recette.id_recette;
 
-        // Titre de la recette
+        // Création du titre
         const titre = document.createElement("h2");
-		titre.id = "detail-image";
+        titre.id = "detail-image";
+        // Définir d'abord le texte du titre selon la langue
+        const titleText = translate ? recette.nameFR : recette.name;
+        titre.textContent = titleText;
+        // Puis, si la recette est validée, ajouter l'étoile
+        if (recette.validated) {
+            const star = document.createElement("span");
+            star.textContent = " ★";
+            star.classList.add("validated-star");
+            titre.appendChild(star);
+        }
 
-        // Auteur
+        // Création des autres éléments
         const auteur = document.createElement("p");
-
-        // Description (Sans quoi ?)
+        auteur.textContent = translate ? `Auteur: ${recette.nameAuthor}` : `Author: ${recette.nameAuthor}`;
         const description = document.createElement("p");
-
-        // Image de la recette
+        description.textContent = translate ? `Sans: ${recette.without}` : `Without: ${recette.without}`;
         const image = document.createElement("img");
         image.src = recette.imageURL;
-        image.classList.add("recette-image"); // Ajoute une classe pour le CSS
-		image.id = "detail-image";
+        image.classList.add("recette-image");
+        image.id = "detail-image";
+        image.alt = translate ? `Image de ${recette.name}` : `Image of ${recette.name}`;
 
-		const tradButton = document.createElement("button");
-		tradButton.classList.add("translateButton");
-		tradButton.id = "tradButton";
-		
-		if(translate)
-		{
-			titre.textContent = recette.nameFR;
-			auteur.textContent = `Auteur: ${recette.nameAuthor}`;
-			description.textContent = `Sans: ${recette.without}`;
-			image.alt = `Image de ${recette.name}`;
-			tradButton.textContent = "traduire";
-		}else{
-			titre.textContent = recette.name;
-			auteur.textContent = `Author: ${recette.nameAuthor}`;
-			description.textContent = `Without: ${recette.without}`;
-			image.alt = `Image of ${recette.name}`;
-			tradButton.textContent = "translate";
-		}
-
-		// Initialisation du compteur de likes
-		let nombreLikes = 0;
-		if (listeLikes[recette.id_recette]) {
-			nombreLikes = listeLikes[recette.id_recette].likes.length;
-		}
-
-		let userLiked = false; 
-		if (listeLikes[recette.id_recette])
-		{
-			userLiked = listeLikes[recette.id_recette]
-			if (listeLikes[recette.id_recette].likes.includes("67d1def77461c")) {
-				userLiked = true;
-			}
-		}
-
-		// Bouton Like
-		const likeButton = document.createElement("button");
-		likeButton.textContent = `❤️ ${nombreLikes}`; // Affiche le nombre de likes
-		likeButton.classList.add("like-button");
-
-		// Ajoute la classe "liked" si l'utilisateur a déjà liké
-		if (userLiked) {
-			likeButton.classList.add("liked");
-		} else {
-			likeButton.classList.remove("liked");
-		}
-		likeButton.dataset.recipeId = recette.id_recette; // Stocke l'ID de la recette dans un attribut data-*
-
-		if(tradButton)
-		{
-			tradButton.addEventListener("click", async () => {
-				const idRecipe = recette.id_recette;
-				await traduireRecette(idRecipe);
-			})
-		}
-		
-        // Écouteur d'événement sur le bouton Like
-        likeButton.addEventListener("click", async () => {
-            await ajouteLike(recette.id_recette); // Appelle ajouteLike avec l'ID de la recette
-			const searchInput = document.getElementById("searchInput").value;
-            const recipes = await getRecettesByLettre(searchInput);
-            const likes = await getLike();
-			const translate = document.getElementById("translateCheckbox").checked;
-            await afficherRecette(recipes, likes,translate);
+        const tradButton = document.createElement("button");
+        tradButton.classList.add("translateButton");
+        tradButton.id = "tradButton";
+        tradButton.textContent = translate ? "traduire" : "translate";
+        tradButton.addEventListener("click", async () => {
+            await traduireRecette(recette.id_recette);
         });
 
-        // Ajout des éléments au conteneur de recette
-		recetteDiv.appendChild(idRecipe);
+        // Gestion des likes
+        let nombreLikes = 0;
+        if (likes[recette.id_recette]) {
+            nombreLikes = likes[recette.id_recette].likes.length;
+        }
+        let userLiked = false;
+        if (likes[recette.id_recette] && likes[recette.id_recette].likes.includes("67d1def77461c")) {
+            userLiked = true;
+        }
+        const likeButton = document.createElement("button");
+        likeButton.textContent = `❤️ ${nombreLikes}`;
+        likeButton.classList.add("like-button");
+        if (userLiked) {
+            likeButton.classList.add("liked");
+        }
+        likeButton.dataset.recipeId = recette.id_recette;
+        likeButton.addEventListener("click", async () => {
+            await ajouteLike(recette.id_recette);
+            const searchInput = document.getElementById("searchInput").value;
+            const recipes = await getRecettesByLettre(searchInput);
+            const likes = await getLike();
+            const translate = document.getElementById("translateCheckbox").checked;
+            await afficherRecette(recipes, likes, translate);
+        });
+
+        // Assemblage
+        recetteDiv.appendChild(idRecipe);
         recetteDiv.appendChild(titre);
         recetteDiv.appendChild(image);
         recetteDiv.appendChild(auteur);
         recetteDiv.appendChild(description);
-		recetteDiv.appendChild(likeButton);
-		recetteDiv.appendChild(tradButton);
+        recetteDiv.appendChild(likeButton);
+        recetteDiv.appendChild(tradButton);
 
-        // Ajout au conteneur principal
         recetteListeDiv.appendChild(recetteDiv);
     });
 }
+
 
 async function ajouteLike(idRecipe)
 {
@@ -603,6 +575,22 @@ async function afficherDetailRecette(recette,likes,translate) {
 		const translate = document.getElementById("translateCheckbox").checked;
 		await afficherDetailRecette(recipe, likes, translate);
 	});
+	// Si l'utilisateur est administrateur, afficher un bouton de validation si la recette n'est pas déjà validée
+    const role = localStorage.getItem("role");
+    // Ici, on suppose que l'objet recette contient un attribut "validated" (true/false)
+    if (role === "administrateur" && !recette.validated) {
+        const validateBtn = document.createElement("button");
+        validateBtn.textContent = "Valider Recette";
+        validateBtn.classList.add("validate-button");
+        validateBtn.addEventListener("click", async () => {
+			console.log("test si button activé");
+            await validerRecette(recette.id_recette);
+            // Optionnel : recharger la recette pour mettre à jour son état
+            const updatedRecipe = await getRecettesById(recette.id_recette);
+            await afficherDetailRecette(updatedRecipe, likes, translate);
+        });
+        recetteDetailDiv.appendChild(validateBtn);
+    }
 
 	//si l'utilisateur clique sur la croix
 	const fermerModal = document.querySelector(".close");
@@ -621,6 +609,31 @@ async function afficherDetailRecette(recette,likes,translate) {
 		}
 	});
 }
+async function validerRecette(idRecipe) {
+    try {
+        const params = new URLSearchParams();
+		console.log(idRecipe);
+        params.append("id_recipe", idRecipe);
+        const response = await fetch(`${webServerAddress}/recipe/validate`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: params
+        });
+        const result = await response.json();
+        if (response.ok) {
+            alert("Recette validée avec succès !");
+        } else {
+            alert("Erreur lors de la validation de la recette : " + result.message);
+        }
+        return result;
+    } catch (error) {
+        console.error("Erreur lors de la validation:", error);
+    }
+}
+
+
 
 async function ouvrirModale() {
     const modal = document.getElementById("recette-modal");
