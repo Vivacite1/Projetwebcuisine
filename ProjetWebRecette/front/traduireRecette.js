@@ -6,6 +6,11 @@ window.addEventListener("DOMContentLoaded", () => {
 	}
 });
 
+const buttonSave = document.getElementById("buttonSave");
+if(buttonSave)
+{
+	// await saveModif();
+}
 async function afficherLesRecettes(recette) {
 	const divAnglais = document.querySelector(".recette-anglais");
 	const divFr = document.querySelector(".recette-française");
@@ -18,7 +23,7 @@ async function afficherLesRecettes(recette) {
 	console.log("Recette reçue :", recette); // debug
 
 	// --- Partie ANGLAISE ---
-	const ingredientsEN = recette.ingredients?.map(ing => `<li>${ing.quantity} ${ing.name}</li>`).join("") || "";
+	const ingredientsEN = recette.ingredients?.map(ing => `<li>${ing.quantity} ${ing.name} , ${ing.type} </li>`).join("") || "";
 	const stepsEN = recette.steps?.map(step => `<li>${step}</li>`).join("") || "";
 
 	divAnglais.innerHTML = `
@@ -42,22 +47,23 @@ async function afficherLesRecettes(recette) {
 	}
 	// Ingrédients FR
 	let ingredientsFR = "";
-	if(!recette.ingredientsFR)
+	for(let i = 0; i < recette.ingredients?.length; i++)
 	{
-		recette.ingredients.forEach((ing,i) => {
-			ingredientsFR += `<li>${ing.quantity} <input type="text" placeholder="Traduction de l'ingrédient" id="ingredient-${i}" />
-			                                      <input type="text" placeholder="Traduction du type id="type-${i}" /></li>`;
-		});
-	}else
-	{
-		recette.ingredientsFR?.forEach((ing, i) => {
-			if (!ing.name) {
-				ingredientsFR += `<li>${ing.quantity} <input type="text" placeholder="Traduction de l'ingrédient" id="ingredient-${i}" />
-			                                      <input type="text" placeholder="Traduction du type" id="type-${i}" /></li>`;
-			} else {
-				ingredientsFR += `<li>${ing.quantity} ${ing.name}</li>`;
+		if(!recette.ingredientsFR)
+		{
+			ingredientsFR += `<li>${recette.ingredients[i].quantity} <input type="text" placeholder="Traduction de : ${recette.ingredients[i].name}" id="ingredient-${i}" />
+			                                      <input type="text" placeholder="Traduction du ${recette.ingredients[i].type}" id="type-${i}" /></li>`;
+		}else
+		{
+			if(recette.ingredientsFR[i].name == "")
+			{
+				ingredientsFR += `<li>${recette.ingredients[i].quantity} <input type="text" placeholder="Traduction de : ${recette.ingredients[i].name}" id="ingredient-${i}" />
+			                                      <input type="text" placeholder="Traduction du ${recette.ingredients[i].type}" id="type-${i}" /></li>`;
+			}else
+			{
+				ingredientsFR += `<li>${recette.ingredientsFR[i].quantity} ${recette.ingredientsFR[i].name} , ${recette.ingredientsFR[i].type}</li>`;
 			}
-		});
+		}
 	}
 	
 	// Étapes FR
@@ -83,6 +89,29 @@ async function afficherLesRecettes(recette) {
 		<h3>Étapes</h3>
 		<ol>${stepsFR}</ol>
 	`;
+}
+
+async function saveModif(idRecipe)
+{
+	const recipeTraduit = sessionStorage.getItem(recetteTrad);
+
+	
+	try {
+        const response = await fetch(`${webServerAddress}/recipe/modify/`+idRecipe, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(recetteData)
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert("Recette modifiée avec succès !");
+        } else {
+            alert("Erreur lors de la modification de la recette !");
+        }
+    } catch (error) {
+        console.error(" Erreur :", error);
+    }
 }
 
 

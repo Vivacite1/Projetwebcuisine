@@ -414,7 +414,8 @@ async function afficherRecette(allRecettes,likes,translate) {
 		
         // Écouteur d'événement sur le bouton Like
         likeButton.addEventListener("click", async () => {
-            await ajouteLike(recette.id_recette); // Appelle ajouteLike avec l'ID de la recette
+			const userID = localStorage.getItem("id_user");
+            await ajouteLike(recette.id_recette,userID); // Appelle ajouteLike avec l'ID de la recette
 			const searchInput = document.getElementById("searchInput").value;
             const recipes = await getRecettesByLettre(searchInput);
             const likes = await getLike();
@@ -436,10 +437,10 @@ async function afficherRecette(allRecettes,likes,translate) {
     });
 }
 
-async function ajouteLike(idRecipe)
+async function ajouteLike(idRecipe,idUser)
 {
 	try {
-        const response = await fetch(`${webServerAddress}/like/recipe/`+idRecipe+`/67d1def77461c`, {
+        const response = await fetch(`${webServerAddress}/like/recipe/`+idRecipe+`/`+idUser, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -531,6 +532,7 @@ async function afficherDetailRecette(recette,likes,translate) {
 	if (!recette) return;
 	const listeLikes = likes;
 	const recetteDetailDiv = document.getElementById("recetteDetail");
+	const userID = localStorage.getItem("id_user");
 
 	const recetteData = recette;
 	// const titreRecette = document.createElement("h2");
@@ -581,7 +583,7 @@ async function afficherDetailRecette(recette,likes,translate) {
 	if (listeLikes[recetteData.id_recette])
 	{
 		userLiked = listeLikes[recetteData.id_recette]
-		if (listeLikes[recetteData.id_recette].likes.includes("67d1def77461c")) {
+		if (listeLikes[recetteData.id_recette].likes.includes(userID)) {
 			userLiked = true;
 		}
 	}
@@ -597,7 +599,7 @@ async function afficherDetailRecette(recette,likes,translate) {
 	likeButton.dataset.recipeId = recette.id_recette;
 	//Obliger d'ajouter l'événement dans la fonction
 	likeButton.addEventListener("click", async () => {
-		await ajouteLike(recetteData.id_recette); 
+		await ajouteLike(recetteData.id_recette,userID); 
 		const recipe = await getRecettesById(recetteData.id_recette);
 		const likes = await getLike();
 		const translate = document.getElementById("translateCheckbox").checked;
