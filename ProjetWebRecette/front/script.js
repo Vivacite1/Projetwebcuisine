@@ -528,6 +528,7 @@ async function afficherDetailRecette(recette,likes,translate) {
 			${recetteData.stepsFR?.map(step => `<li>${step}</li>`).join("") || "<li>Aucune étape</li>"}
 		</ol>
 		<button id="detailBouton" class="like-button" > ❤️ ${listeLikes[recetteData.id_recette].likes.length} </button>
+		<button id="commBouton" class="commentaire-button"> Ajouter Commentaire </button>
 	`;
 	}else
 	{
@@ -548,6 +549,7 @@ async function afficherDetailRecette(recette,likes,translate) {
 			${recetteData.steps?.map(step => `<li>${step}</li>`).join("") || "<li>No steps</li>"}
 		</ol>
 		<button id="detailBouton" class="like-button" > ❤️ ${listeLikes[recetteData.id_recette].likes.length} </button>
+		<button id="commBouton" class="commentaire-button"> Ajouter Commentaire </button>
 	`;
 	}
 
@@ -894,8 +896,6 @@ async function previewImage(event) {
         reader.readAsDataURL(file); // Lit le fichier comme une URL
     }
 }
-
-
 
 async function ajoutRestriction(event) {
 	event.preventDefault();

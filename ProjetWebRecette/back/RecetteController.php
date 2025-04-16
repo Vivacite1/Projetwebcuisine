@@ -260,7 +260,6 @@ class RecetteController
         $recipeIndex = array_search($recipe['name'], array_column($recipes, 'name'));
         $recipes[$recipeIndex] = array_replace($recipes[$recipeIndex], $data);
         
-        // Modifiez cette partie pour retourner un JSON propre
         http_response_code(200);
         echo json_encode(['success' => true, 'message' => 'Recette modifiée avec succès', 'name' => $data['name']]);
         
