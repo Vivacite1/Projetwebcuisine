@@ -1,8 +1,8 @@
 [
     {
-        "id_recette": "c31b18de-4d93-45eb-85c4-06e2135a78de",
-        "name": "Test",
-        "nameFR": "Roti Ã  la cocotte",
+        "id_recette": "67dc295b26eb7",
+        "name": "Crock Pot Roast TEST",
+        "nameFR": "test",
         "author": "Unknown",
         "without": [
             "NoGluten",
@@ -10,56 +10,29 @@
         ],
         "ingredients": [
             {
-                "quantity": "1",
                 "name": "beef roast",
+                "quantity": "1",
                 "type": "Meat"
             },
             {
-                "quantity": "1 package",
                 "name": "brown gravy mix",
+                "quantity": "1 package",
                 "type": "Baking"
             },
             {
-                "quantity": "1 package",
                 "name": "dried Italian salad dressing mix",
+                "quantity": "1 package",
                 "type": "Condiments"
             },
             {
-                "quantity": "1 package",
                 "name": "dry ranch dressing mix",
+                "quantity": "1 package",
                 "type": "Condiments"
             },
             {
-                "quantity": "1\/2 cup",
                 "name": "water",
+                "quantity": "1\/2 cup",
                 "type": "Drinks"
-            }
-        ],
-        "ingredientsFR": [
-            {
-                "quantity": "1",
-                "name": "roti de boeuf",
-                "type": "Viande"
-            },
-            {
-                "quantity": "1 sachet",
-                "name": "melange sauce au vin",
-                "type": "Aide culinaire"
-            },
-            {
-                "quantity": "1 package",
-                "name": null,
-                "type": "Condiments"
-            },
-            {
-                "quantity": "1 package",
-                "name": null,
-                "type": "Condiments"
-            },
-            {
-                "quantity": "1\/2 verre",
-                "name": "eau",
-                "type": "Boisson"
             }
         ],
         "steps": [
@@ -68,12 +41,6 @@
             "Pour the water around the roast.",
             "Cook on low for 7-9 hours."
         ],
-        "stepsFR": [
-            "Placer le roti dans la cocotte en fonte",
-            "Melanger les sachets de sauces en poudre dans un bol et saupoudrer le roti avec.",
-            "Arroser le roti",
-            "Cuire Ã  feu doux entre 7 et 9 heures."
-        ],
         "timers": [
             1,
             1,
@@ -81,8 +48,40 @@
             420
         ],
         "imageURL": "http:\/\/img.sndimg.com\/food\/image\/upload\/w_266\/v1\/img\/recipes\/27\/20\/8\/picVfzLZo.jpg",
-        "originalURL": "http:\/\/www.food.com\/recipe\/to-die-for-crock-pot-roast-27208",
-        "validated": true
+        "originalURL": "",
+        "ingredientsFR": [
+            {
+                "quantity": "1",
+                "name": "t",
+                "type": "t"
+            },
+            {
+                "quantity": "1 package",
+                "name": "t",
+                "type": "t"
+            },
+            {
+                "quantity": "1 package",
+                "name": "t",
+                "type": "t"
+            },
+            {
+                "quantity": "1 package",
+                "name": "t",
+                "type": "t"
+            },
+            {
+                "quantity": "1\/2 cup",
+                "name": "t",
+                "type": "t"
+            }
+        ],
+        "stepsFR": [
+            "t",
+            "tt",
+            "t",
+            "t"
+        ]
     },
     {
         "id_recette": "45722fae-67b0-44c0-a0cf-51a2462ed51d",
@@ -264,7 +263,7 @@
     {
         "id_recette": "73c5fbe9-732a-49d1-a65c-3de7e93ba2ea",
         "name": "Cranberry and Apple Stuffed Acorn Squash Recipe",
-        "nameFR": "Courge poivrÃ©e farcies aux cranberries et aux pommes",
+        "nameFR": "Courge poivrée farcies aux cranberries et aux pommes",
         "author": "Unknown",
         "without": [
             "NoGluten",
@@ -674,75 +673,7 @@
         "originalURL": ""
     },
     {
-        "id_recette": "67dc295b26eb7",
-        "name": "Crock Pot Roast",
-        "nameFR": "test",
-        "nameAuthor": "67dbf72c672b5",
-        "without": [
-            "NoGluten",
-            "NoMilk"
-        ],
-        "ingredients": [
-            {
-                "quantity": "1",
-                "name": "beef roast",
-                "type": "Meat"
-            },
-            {
-                "quantity": "1 package",
-                "name": "brown gravy mix",
-                "type": "Baking"
-            },
-            {
-                "quantity": "1 package",
-                "name": "dried Italian salad dressing mix",
-                "type": "Condiments"
-            },
-            {
-                "quantity": "1 package",
-                "name": "dry ranch dressing mix",
-                "type": "Condiments"
-            },
-            {
-                "quantity": "1\/2 cup",
-                "name": "water",
-                "type": "Drinks"
-            }
-        ],
-        "steps": [
-            "Place beef roast in crock pot.",
-            "Mix the dried mixes together in a bowl and sprinkle over the roast.",
-            "Pour the water around the roast.",
-            "Cook on low for 7-9 hours."
-        ],
-        "imageURL": "http:\/\/img.sndimg.com\/food\/image\/upload\/w_266\/v1\/img\/recipes\/27\/20\/8\/picVfzLZo.jpg",
-        "originalURL": ""
-    },
-    {
         "id_recette": "67e1ae4a1892b",
-        "name": "test",
-        "nameFR": "",
-        "nameAuthor": "67dbf72c672b5",
-        "without": [
-            "test✖"
-        ],
-        "ingredients": [
-            {
-                "quantity": "test",
-                "name": "test",
-                "type": "test"
-            }
-        ],
-        "ingredientsFR": "",
-        "steps": [
-            "test✖"
-        ],
-        "stepsFR": "",
-        "imageURL": "C:\\fakepath\\4777bc26067bc7eb94715f1b9624f647.png",
-        "originalURL": ""
-    },
-    {
-        "id_recette": "67e3fce869410",
         "name": "test",
         "nameFR": "",
         "nameAuthor": "67dbf72c672b5",

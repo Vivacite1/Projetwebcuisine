@@ -3,7 +3,9 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-session_start();
+// error_log("index.php");
+// error_log(json_encode($_SESSION));
+
 
 require_once 'Router.php';
 require_once 'AuthController.php';

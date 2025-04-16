@@ -1,3 +1,8 @@
+"use strict"
+
+// Description: This file contains the JavaScript code for the front-end of the application.
+const webServerAddress = "http://localhost:8080";
+
 window.addEventListener("DOMContentLoaded", () => {
 	const recetteJSON = sessionStorage.getItem("recetteTrad");
 	if (recetteJSON) {
@@ -9,8 +14,15 @@ window.addEventListener("DOMContentLoaded", () => {
 const buttonSave = document.getElementById("buttonSave");
 if(buttonSave)
 {
-	// await saveModif();
+	buttonSave.addEventListener("click", async () => {
+		const recetteJSON = sessionStorage.getItem("recetteTrad");
+		const recette = JSON.parse(recetteJSON);
+		const idRecipe = recette.id_recette;
+		await saveModif(idRecipe);
+	});
+
 }
+
 async function afficherLesRecettes(recette) {
 	const divAnglais = document.querySelector(".recette-anglais");
 	const divFr = document.querySelector(".recette-française");
@@ -45,24 +57,26 @@ async function afficherLesRecettes(recette) {
 	}else {
 		titreFR = `<h2>${recette.nameFR}</h2>`;
 	}
-	// Ingrédients FR
+	
 	let ingredientsFR = "";
-	for(let i = 0; i < recette.ingredients?.length; i++)
-	{
-		if(!recette.ingredientsFR)
-		{
-			ingredientsFR += `<li>${recette.ingredients[i].quantity} <input type="text" placeholder="Traduction de : ${recette.ingredients[i].name}" id="ingredient-${i}" />
-			                                      <input type="text" placeholder="Traduction du ${recette.ingredients[i].type}" id="type-${i}" /></li>`;
-		}else
-		{
-			if(recette.ingredientsFR[i].name == "")
-			{
-				ingredientsFR += `<li>${recette.ingredients[i].quantity} <input type="text" placeholder="Traduction de : ${recette.ingredients[i].name}" id="ingredient-${i}" />
-			                                      <input type="text" placeholder="Traduction du ${recette.ingredients[i].type}" id="type-${i}" /></li>`;
-			}else
-			{
-				ingredientsFR += `<li>${recette.ingredientsFR[i].quantity} ${recette.ingredientsFR[i].name} , ${recette.ingredientsFR[i].type}</li>`;
-			}
+
+	for (let i = 0; i < recette.ingredients.length; i++) {
+		const ing = recette.ingredients[i];
+
+		// Si le tableau ingredientsFR n'existe pas ou que l'élément à i est manquant ou incomplet
+		if (
+			!recette.ingredientsFR || 
+			!recette.ingredientsFR[i] || 
+			!recette.ingredientsFR[i].name
+		) {
+			ingredientsFR += `
+				<li>${ing.quantity} 
+					<input type="text" placeholder="Traduction de : ${ing.name}" id="ingredient-${i}" />
+					<input type="text" placeholder="Traduction du ${ing.type}" id="type-${i}" />
+				</li>`;
+		} else {
+			const fr = recette.ingredientsFR[i];
+			ingredientsFR += `<li>${fr.quantity} ${fr.name}, ${fr.type}</li>`;
 		}
 	}
 	
@@ -93,14 +107,61 @@ async function afficherLesRecettes(recette) {
 
 async function saveModif(idRecipe)
 {
-	const recipeTraduit = sessionStorage.getItem(recetteTrad);
+	const recipeTraduit = sessionStorage.getItem("recetteTrad");
+	if(!recipeTraduit)
+	{
+		alert("Aucune ne recette n'est stockée");
+	}
 
-	
+	const recetteDataJson = JSON.parse(recipeTraduit);
+
+	const nameFR = document.getElementById("input-nameFR");
+	if (nameFR)
+	{
+		recetteDataJson.nameFR = nameFR;
+	}
+
+	if (!recetteDataJson.ingredientsFR) {
+		recetteDataJson.ingredientsFR = [];
+	}
+
+	for (let i = 0; i<recetteDataJson.ingredients.length;i++)
+	{
+		const ingredient = document.getElementById('ingredient-'+i);
+		const type = document.getElementById('type-'+i);
+		if(ingredient && type)
+		{
+			if (ingredient && type) {
+				// S'assurer que l'objet à l'indice i existe
+				recetteDataJson.ingredientsFR[i] = {
+					quantity: recetteDataJson.ingredients[i].quantity,
+					name: ingredient.value,
+					type: type.value // ⚠️ tu avais mis `ingredient.type` ce qui est incorrect
+				};
+			}
+		}
+	}
+
+	if(!recetteDataJson.stepsFR)
+	{
+		recetteDataJson.stepsFR = [];
+	}
+	for (let i=0; i<recetteDataJson.steps.length;i++)
+	{
+		const steps = document.getElementById("stepFR-"+i);
+		if(steps)
+		{
+			recetteDataJson.stepsFR[i] = steps.value;
+		}
+	}
+
+	console.log(recetteDataJson);
+	console.log("await fetch(${webServerAddress}/recipe/modify/"+idRecipe);
 	try {
         const response = await fetch(`${webServerAddress}/recipe/modify/`+idRecipe, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(recetteData)
+			headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(recetteDataJson),
         });
 
         const result = await response.json();

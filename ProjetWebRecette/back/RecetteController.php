@@ -222,7 +222,7 @@ class RecetteController
             'id_recette'   => $idRecipe,
             'name'         => $nameRecipe,
             'nameFR'       => $nameRecipeFR,
-            'nameAuthor'   => $nameAuthor,
+            'author'       => $nameAuthor,
             'without'      => $without,
             'ingredients'  => $ingredient,
             'ingredientsFR'=> $ingredientsFR,
@@ -247,23 +247,23 @@ class RecetteController
         // Vérifier si le Content-Type est correct
         if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
             http_response_code(400);
-            echo json_encode(['error' => 'Invalid Content-Type header']);
+            echo json_encode(['error' => 'Invalid Content-Type header', 'message' => 'erreur invalid']);
             return;
         }
-
+        
         $jsonData = file_get_contents('php://input');
         $data = json_decode($jsonData, true);
-
         $content = file_get_contents($this->filePath);
         $idRecipe = $params['id_recipe'];
         $recipe = $this->getRecipeByID($idRecipe);
-        $recipes = json_decode($content, true);  
-
+        $recipes = json_decode($content, true);
         $recipeIndex = array_search($recipe['name'], array_column($recipes, 'name'));
         $recipes[$recipeIndex] = array_replace($recipes[$recipeIndex], $data);
-
-        echo $data['name'];
+        
+        // Modifiez cette partie pour retourner un JSON propre
         http_response_code(200);
+        echo json_encode(['success' => true, 'message' => 'Recette modifiée avec succès', 'name' => $data['name']]);
+        
         file_put_contents($this->filePath, json_encode($recipes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 

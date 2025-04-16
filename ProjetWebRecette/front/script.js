@@ -190,8 +190,6 @@ async function inscription(event) {
 async function connexion(event) {
 	const body = new URLSearchParams(new FormData(event.target));
 
-	console.log("Données envoyées:", body.toString());
-
 	try {
 		console.log("Envoi de la requête à:", `${webServerAddress}/login`);
 		const response = await fetch(`${webServerAddress}/login`, {
@@ -209,7 +207,7 @@ async function connexion(event) {
 		if (response.ok) {
 			const result = JSON.parse(text);
 			localStorage.setItem("id_user", result.id_user);
-			localStorage.setItem("role", result.role);
+			localStorage.setItem("role",result.role);
 			window.location.href = result.redirect;
 			return result;
 		} else {
@@ -501,13 +499,15 @@ async function getRecettesById(idRecipe)
 
 async function afficherDetailRecette(recette,likes,translate) {
 	
+	document.getElementById("modifierRecette").style.display = "block";
+	document.getElementById("closeButton").style.display = "block";
+
 	if (!recette) return;
 	const listeLikes = likes;
 	const recetteDetailDiv = document.getElementById("recetteDetail");
 	const userID = localStorage.getItem("id_user");
 
 	const recetteData = recette;
-	// const titreRecette = document.createElement("h2");
 
 	if (translate)
 	{
@@ -585,7 +585,6 @@ async function afficherDetailRecette(recette,likes,translate) {
         validateBtn.textContent = "Valider Recette";
         validateBtn.classList.add("validate-button");
         validateBtn.addEventListener("click", async () => {
-			console.log("test si button activé");
             await validerRecette(recette.id_recette);
             // Optionnel : recharger la recette pour mettre à jour son état
             const updatedRecipe = await getRecettesById(recette.id_recette);
@@ -594,12 +593,122 @@ async function afficherDetailRecette(recette,likes,translate) {
         recetteDetailDiv.appendChild(validateBtn);
     }
 
+	//modifier la recette
+	const buttonModifier = document.getElementById("modifierRecette");
+
+	if (buttonModifier) {
+		buttonModifier.addEventListener("click", async (event) => {
+			event.preventDefault();
+			document.getElementById("modifierRecette").style.display = "none";
+			document.getElementById("closeButton").style.display = "none";
+			const detailDiv = document.getElementById("recetteDetail");
+
+			let withoutHTML = "";
+			for (let i = 0; i < recetteData.without.length; i++) {
+				withoutHTML += `<label for="without${i}">Restriction ${i+1} :</label>
+				<input type="text" id="without${i}" value="${recetteData.without[i]}">`;
+			}
+
+			let ingredientsHTML = "";
+			for (let i = 0; i < recetteData.ingredients.length; i++) {
+				ingredientsHTML += `<label for="ingredient${i}">Ingrédient ${i+1} :</label>
+				<input type="text" id="ingredient${i}" value="${recetteData.ingredients[i].name}">
+				<label for="quantity${i}">Quantité :</label>
+				<input type="text" id="quantity${i}" value="${recetteData.ingredients[i].quantity}">
+				<label for="type${i}">Type :</label>
+				<input type="text" id="type${i}" value="${recetteData.ingredients[i].type}">`;
+			}
+
+			let stepsHTML = "";
+			for (let i = 0; i < recetteData.steps.length; i++) {
+				stepsHTML += `<label for="step${i}">Étape ${i+1} :</label>
+				<textarea id="step${i}" rows="2">${recetteData.steps[i]}</textarea>`;
+			}
+
+			detailDiv.innerHTML = `
+				<button id="annulerModif" class="annuler-button">Annuler</button>
+				<div id="modifierRecetteForm">
+					<label for="name">Nom de la recette :</label>
+					<input type="text" id="nomInput" value="${recetteData.name}">
+					<label for="author">Auteur : </label>
+					<input type="text" id="authorInput" value="${recetteData.author}">
+					${withoutHTML}
+					${ingredientsHTML}
+					${stepsHTML}
+					<label for="imageUpload">Télécharger une nouvelle image :</label>
+					<input type="file" id="imageUpload" name="imageUpload" accept="image/*" onchange="previewImage(event)" />
+					<button id="modifRecette">Modifier Recette</button>
+				</div>
+			`;
+
+			const annulerModif = document.getElementById("annulerModif");
+			if (annulerModif) {
+				annulerModif.addEventListener("click", async () => {
+					// Recharger la recette pour annuler les modifications
+					const updatedRecipe = await getRecettesById(recetteData.id_recette);
+					const likes = await getLike();
+					const translate = document.getElementById("translateCheckbox").checked;
+					await afficherDetailRecette(updatedRecipe, likes, translate);
+				});
+			}
+
+			const buttonModify = document.getElementById("modifRecette");
+			if (buttonModify) {
+				buttonModify.addEventListener("click", async () => {					
+				
+					const recetteJSON = {
+						name: document.getElementById("nomInput").value,
+						author: document.getElementById("authorInput").value,
+						without: [],
+						ingredients: [],
+						steps: [],
+						imageURL: recetteData.imageURL,
+					};
+					const withoutInputs = document.querySelectorAll("[id^='without']");
+					for (let i = 0; i < withoutInputs.length; i++) {
+						const withoutValue = document.getElementById(`without${i}`).value;
+						if (withoutValue) {
+							recetteJSON.without.push(withoutValue);
+						}
+					}
+					const ingredientInputs = document.querySelectorAll("[id^='ingredient']");
+					const quantityInputs = document.querySelectorAll("[id^='quantity']");
+					const typeInputs = document.querySelectorAll("[id^='type']");
+					for (let i = 0; i < ingredientInputs.length; i++) {
+
+						recetteJSON.ingredients.push({
+							name: ingredientInputs[i].value,
+							quantity: quantityInputs[i].value,
+							type: typeInputs[i].value,
+						});
+					}
+					const stepInputs = document.querySelectorAll("[id^='step']");
+					for (let i = 0; i < stepInputs.length; i++) {
+						const stepValue = document.getElementById(`step${i}`).value;
+						if (stepValue) {
+							recetteJSON.steps.push(stepValue);
+						}
+					}
+					const imageUpload = document.getElementById("imageUpload");
+					if (imageUpload.files.length > 0) {
+						recetteJSON.image = imageUpload.files[0];
+					}
+
+					await modifierRecette(recetteData.id_recette, recetteJSON);
+					const likes = await getLike();
+					const translate = document.getElementById("translateCheckbox").checked;
+					await afficherDetailRecette(recetteData, likes, translate);
+				});
+			}
+		});
+	}
+
+
 	//si l'utilisateur clique sur la croix
 	const fermerModal = document.querySelector(".close");
 	fermerModal.addEventListener("click", fermerModale);
 
 	window.addEventListener("click", async (event) => {
-		console.log("user est entré");
 		if (event.target === document.getElementById("recette-modal")) {
 			fermerModale();
 			const likes = await getLike();
@@ -611,6 +720,38 @@ async function afficherDetailRecette(recette,likes,translate) {
 		}
 	});
 }
+
+async function modifierRecette(idRecipe, recetteJSON) {
+
+	try {
+		const response = await fetch(`${webServerAddress}/recipe/modify/` + idRecipe, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(recetteJSON),
+		});
+		if (response.ok) {
+			const result = await response.json();
+			alert("Recette modifiée avec succès !");
+			// Fermer la modale après la modification
+			fermerModale();
+			// Recharger la liste des recettes
+			const searchTerm = document.getElementById("searchInput").value;
+			const recipes = await getRecettesByLettre(searchTerm);
+			const likes = await getLike();
+			const translate = document.getElementById("translateCheckbox").checked;
+			await afficherRecette(recipes, likes, translate);
+
+		} else {
+			const result = await response.json();
+			alert("Erreur lors de la modification de la recette : " + result.message);
+		}
+	} catch (error) {
+		console.error("Erreur lors de la modification:", error);
+		alert("Erreur lors de la modification de la recette.");
+	}
+}
+
+
 async function validerRecette(idRecipe) {
     try {
         const params = new URLSearchParams();
@@ -634,8 +775,6 @@ async function validerRecette(idRecipe) {
         console.error("Erreur lors de la validation:", error);
     }
 }
-
-
 
 async function ouvrirModale() {
     const modal = document.getElementById("recette-modal");
@@ -885,7 +1024,7 @@ async function sendRecette() {
     // Construction de l'objet JSON
     const recetteData = {
         name: nameRecipe,
-        nameAuthor: author,
+        author: author,
         without: restrictions,
         ingredients: ingredients,
         steps: steps,

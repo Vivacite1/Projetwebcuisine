@@ -2,6 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+session_start();
 class AuthController
 {
 	private string $filePath;
@@ -97,19 +98,16 @@ class AuthController
 		$users = $this->getAllUsers();
 		$trouve = false;
 		foreach($users as $user)
-{
-    if ($user['mail'] === $email) {
-        $trouve = true;
-        if (!password_verify($password, $user['password'])) {
-            http_response_code(400);
-            echo json_encode(['message' => 'Mot de passe incorrect']);
-            return;
-        }
-        $_SESSION['user'] = $user['id_user'];
-        $_SESSION['role'] = $user['role']; // Ajout du rôle dans la session
-        $userRole = $user['role'];
-    }
-}
+		{
+			if ($user['mail'] === $email) {
+				$trouve = true;
+				if (!password_verify($password, $user['password'])) {
+					http_response_code(400);
+					echo json_encode(['message' => 'Mot de passe incorrect']);
+					return;
+				}
+			}
+		}
 
 		if(!$trouve){
 			http_response_code(400);
@@ -117,19 +115,28 @@ class AuthController
 			return;
 		}
 
-		http_response_code(200);
-		echo json_encode(['message' => 'Connexion réussie',
+
+		$_SESSION['id'] = $user['id_user'];
+		$_SESSION['username'] = $user['mail']; // Ajout du rôle dans la session
+		$_SESSION['role'] = $user['role'];
+		error_log($_SESSION['id']);
+		$userRole = $user['role'];
+
+		// http_response_code(200);
+		echo json_encode([
 						'redirect' => 'index.html',
-					     'id_user' => $_SESSION['user'],
+						'message' => 'Connexion réussie',
+					     'id_user' => $user['id_user'],
 						  'role' => $userRole]);
+
+		// echo json_encode(['redirect' => 'index.html']);
+		http_response_code(200);
+
 	}
 
 
 	public function handleLogout(): void
 	{
-		if(isset($_SESSION['user'])) {
-			unset($_SESSION['user']);
-		}
 		http_response_code(200);
 		echo json_encode(['message' => 'Logged out successfully',
 							'redirect' => 'connexion.html']);
