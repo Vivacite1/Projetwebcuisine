@@ -3,9 +3,25 @@
 const webServerAddress = "http://localhost:8080";
 
 document.addEventListener("DOMContentLoaded", async () => {
-   const users      = await getUsers();
-   const demandes   = await getDemandes();
-   await afficherUser(users, demandes);
+    const idUser = localStorage.getItem("id_user");
+	const role = localStorage.getItem("role");
+	const pageActuelle = window.location.pathname.split("/").pop();
+
+	// Si on est sur index.html et que l'utilisateur n'est pas connecté
+	if (pageActuelle === "listeUtilisateur.html" && (!idUser || !role)) {
+		alert("⚠️ Vous devez être connecté pour accéder à cette page.");
+		window.location.href = "connexion.html"; // ou autre page de ton choix
+	}else{
+        const users      = await getUsers();
+        const demandes   = await getDemandes();
+        await afficherUser(users, demandes);
+    }
+});
+
+window.addEventListener("beforeunload", async () => {
+	if (localStorage.getItem("id_user")) {
+		await deconnexionUser();
+	}
 });
 
 const buttonDeconnexion = document.getElementById("deconnexion");

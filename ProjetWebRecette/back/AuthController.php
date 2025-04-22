@@ -101,6 +101,8 @@ class AuthController
 		{
 			if ($user['mail'] === $email) {
 				$trouve = true;
+				$userRole = $user['role'];
+				$userId = $user['id_user'];
 				if (!password_verify($password, $user['password'])) {
 					http_response_code(400);
 					echo json_encode(['message' => 'Mot de passe incorrect']);
@@ -116,17 +118,14 @@ class AuthController
 		}
 
 
-		$_SESSION['id'] = $user['id_user'];
-		$_SESSION['username'] = $user['mail']; // Ajout du rôle dans la session
-		$_SESSION['role'] = $user['role'];
-		error_log($_SESSION['id']);
-		$userRole = $user['role'];
+		$_SESSION['id'] = $userId;
+		$_SESSION['role'] = $userRole;
 
 		// http_response_code(200);
 		echo json_encode([
 						'redirect' => 'index.html',
 						'message' => 'Connexion réussie',
-					     'id_user' => $user['id_user'],
+					     'id_user' => $userId,
 						  'role' => $userRole]);
 
 		// echo json_encode(['redirect' => 'index.html']);
