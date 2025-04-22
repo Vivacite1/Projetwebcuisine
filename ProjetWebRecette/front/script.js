@@ -17,19 +17,18 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("beforeunload", async () => {
-	if (localStorage.getItem("id_user")) {
+	const pageActuelle = window.location.pathname.split("/").pop();
+
+	if (localStorage.getItem("id_user") && pageActuelle === "index.html") {
 		await deconnexionUser();
 	}
 });
-
-
-const pageActuel = window.location.pathname;
 
 const role = localStorage.getItem("role");
 
 const ajouterRecetteBtn = document.getElementById("ajouterRecette");
 
-if (role !== "chef") 
+if (role !== "chef" && role !== "administrateur") 
 {
 	if (ajouterRecetteBtn) {
 		ajouterRecetteBtn.style.display = "none";
@@ -893,7 +892,7 @@ async function fermerModale() {
 async function formAjouter()
 {
 	const role = localStorage.getItem("role");
-	if (role !== "chef")
+	if (role !== "chef" && role !== "administrateur")
 	{
 		alert("Vous n'avez pas les droits nécessaires pour ajouter une recette.");
 		return;
@@ -1127,6 +1126,7 @@ async function sendRecette() {
     const steps 	= Array.from(document.querySelectorAll("#listEtape li")).map(li => li.textContent);
 	const imageUrl 	= document.getElementById("imageUpload").value.trim();
 
+
     // Construction de l'objet JSON
     const recetteData = {
         name: nameRecipe,
@@ -1157,7 +1157,6 @@ async function sendRecette() {
 
 async function deconnexionUser() {
 	try {
-		// Send a GET request to the server to retrieve all comments
 		const response = await fetch(`${webServerAddress}/logout`, {
 			method: "POST",
 		});

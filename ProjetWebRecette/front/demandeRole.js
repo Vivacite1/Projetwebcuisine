@@ -2,7 +2,6 @@
 
 const webServerAddress = "http://localhost:8080";
 
-
 document.addEventListener("DOMContentLoaded", async () => {
 	const idUser = localStorage.getItem("id_user");
 	const role = localStorage.getItem("role");
