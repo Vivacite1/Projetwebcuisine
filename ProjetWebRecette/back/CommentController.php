@@ -86,8 +86,8 @@ class CommentController
 		}
 
 		$id_recipe 	= $params['id_recipe'];
-		$id_user 	= "67d1db5418a12";
-		$comment 	= $_POST['comment'];
+		$id_user 	= $_POST['id_user'];
+		$comment 	= $_POST['message'];
 
 		if (!$id_recipe || !$comment ) {
 			http_response_code(400);
@@ -115,6 +115,33 @@ class CommentController
 		http_response_code(200);
 		header('Content-Type: application/json; charset=utf-8');
 		echo json_encode($this->getAllComments(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+	}
+
+	public function handleGetCommentsById(array $params)
+	{
+		$idRecipe = $params['id_recipe'];
+		http_response_code(200);
+		header('Content-Type: application/json; charset=utf-8');
+		echo json_encode($this->getCommentById($idRecipe), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+	}
+
+	public function getCommentById($idRecipe)
+	{
+		$comments = $this->getAllComments();
+		if (empty($comments)) {
+			http_response_code(404);
+			echo json_encode(['error' => 'No comments found']);
+			return;
+		}
+
+		$filteredComments = [];
+
+		foreach ($comments as $comment) {
+			if ($comment['id_recipe'] == $idRecipe) {
+				$filteredComments[] = $comment;
+			}
+		}
+		return $filteredComments;
 	}
 
 	public function handleDeleteCommentRequest(array $params): void

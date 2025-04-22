@@ -78,6 +78,7 @@ async function deconnexionUser() {
 			window.location.href = result.redirect;
 			localStorage.removeItem("id_user");
 			localStorage.removeItem("role");
+      sessionStorage.removeItem("recetteTrad");
 			return result;
 		} else {
 			console.error(

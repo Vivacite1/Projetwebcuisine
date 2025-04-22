@@ -8,6 +8,13 @@ document.addEventListener("DOMContentLoaded", async () => {
    await afficherUser(users, demandes);
 });
 
+const buttonDeconnexion = document.getElementById("deconnexion");
+if (buttonDeconnexion) {
+	buttonDeconnexion.addEventListener("click", async () => {
+		await deconnexionUser();
+	});
+}
+
 async function getUsers() {
     try {
 		// Send a GET request to the server to retrieve all comments
@@ -153,7 +160,31 @@ async function accepterDemande(idUserAsking, role) {
     }
 }
 
-
-
+async function deconnexionUser() {
+	try {
+		// Send a GET request to the server to retrieve all comments
+		const response = await fetch(`${webServerAddress}/logout`, {
+			method: "POST",
+		});
+		
+		if (response.ok) {
+			const result = await response.json();
+			console.log("déconnexion réussie", result);
+			window.location.href = result.redirect;
+			localStorage.removeItem("id_user");
+			localStorage.removeItem("role");
+            sessionStorage.removeItem("recetteTrad");
+			return result;
+		} else {
+			console.error(
+				"Echec de la déconnexion:",
+				response.status,
+				response.statusText
+			);
+		}
+	} catch (error) {
+		console.error("Error occurred:", error);
+	}
+}
 
 

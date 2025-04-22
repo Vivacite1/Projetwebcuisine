@@ -43,6 +43,7 @@ $router->register('GET', '/demande', [$authController, 'handleGetDemande']);//fo
 
 $router->register('POST', '/comment/recipe/{id_recipe}', [$commentController, 'handlePostRecipeCommentRequest']);//fonctionne
 $router->register('DELETE', '/comment/{id_comment}/user/{id_user}', [$commentController, 'handleDeleteCommentRequest']);//fonctionne
+$router->register('GET', '/comment/{id_recipe}', [$commentController, 'handleGetCommentsById']);//fonctionne
 
 // $router->register('POST', '/comment/liste', [$recetteController, 'handlePostDisplayComment']);
 

@@ -321,8 +321,8 @@ input[type="text"], input[type="password"] {
 .recette-header {
     position: relative;
 }
+
 .boutonModifier {
-	position: absolute;
 	top: 10px;
 	left: 10px;	background-color: #6C63FF;
 	color: white;
@@ -330,7 +330,6 @@ input[type="text"], input[type="password"] {
 	border-radius: 50%; 
 	width: 40px;
 	height: 40px;
-	display: flex;
 	align-items: center;
 	justify-content: center;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -802,3 +801,50 @@ body.modal-open #recette-list {
 .commentaire-button:active, .validate-button:active {
     transform: translateY(2px);
 }
+
+#recetteDetail {
+    background-color: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 600px;
+    margin: 20px auto;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+#recetteDetail h2 {
+    font-size: 1.5em;
+    margin-bottom: 16px;
+    color: #333;
+    text-align: center;
+}
+
+#recetteDetail label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+#recetteDetail textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    font-size: 1em;
+    transition: border-color 0.2s ease-in-out;
+}
+
+#recetteDetail textarea:focus {
+    outline: none;
+    border-color: #007BFF;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.3);
+}
+
+.recette-list p {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 16px;
+    text-align: center;
+}
+

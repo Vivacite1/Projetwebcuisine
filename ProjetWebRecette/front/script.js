@@ -5,19 +5,27 @@
 const webServerAddress = "http://localhost:8080";
 
 const pageActuel = window.location.pathname;
-// Trigger the getComments function when the form is submitted
-const form = document.getElementById("post-comment");
-if (form) {
-	form.addEventListener("submit", async (event) => {
-		event.preventDefault();
-		const comments = await sendComment(event);
-		event.target.reset();
-		await displayComments(comments);
-	});
+
+const role = localStorage.getItem("role");
+
+const ajouterRecetteBtn = document.getElementById("ajouterRecette");
+
+if (role !== "chef") 
+{
+	if (ajouterRecetteBtn) {
+		ajouterRecetteBtn.style.display = "none";
+	}
+}
+
+const listeUtilisateur = document.getElementById("listUtil")
+if (role !== "administrateur")
+{
+	if (listeUtilisateur) {
+		listeUtilisateur.style.display = "none";
+	}
 }
 
 const buttonSupprimer = document.getElementById("supprimerCommentaire");
-
 if (buttonSupprimer) {
 	buttonSupprimer.addEventListener("click", async () => {
 		const success = await supprimerTousLesCommentaires();
@@ -46,15 +54,6 @@ if (checkbox){
 			await afficherRecette(recettes,likes,translate);
 		}
 	})
-}
-
-const button = document.getElementById("get-comments");
-
-if (button) {
-	button.addEventListener("click", async () => {
-		const comments = await getComments();
-		await displayComments(comments);
-	});
 }
 
 const form1 = document.getElementById("register-form");
@@ -97,9 +96,10 @@ if (searchRecipe){
 }
 
 
-const detailRecette = document.getElementById("recette-list")
+const detailRecette = document.getElementById("recette-list");
 if(detailRecette)
 {
+	detailRecette.classList.add("recette-list");
 	detailRecette.addEventListener("click", async (event) => {
 		let target = event.target;
 		// Vérifie si on clique sur une image ou un titre
@@ -119,41 +119,37 @@ if(detailRecette)
 	});
 }
 
+async function sendComment()
+{
+	const comment = document.getElementById("comment").value.trim();
+	const userID = localStorage.getItem("id_user");
+	const recipeID = document.getElementById("idRecipe").textContent.trim();
 
+	if (comment === "") {
+		alert("Le commentaire ne peut pas être vide !");
+		return;
+	}
 
-/**
- * This function sends a POST request to the server with the form data to add a new comment.
- * @param {SubmitEvent} event The event that triggered the function
- * @returns {Object} The result of the form submission
- */
-async function sendComment(event) {
-	const body = new URLSearchParams(new FormData(event.target));
+	const params = new URLSearchParams();
+	params.append("message", comment);
+	params.append("id_user", userID);
 
 	try {
-		// Send a POST request to the server with the form data
-		const response = await fetch(`${webServerAddress}/comment`, {
+		const response = await fetch(`${webServerAddress}/comment/recipe/`+ recipeID, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
 			},
-			// Serialize the form data to URL-encoded format
-			body,
+			body: params,
 		});
 
 		if (response.ok) {
-			// If the request was successful, log the result
-			const result = await response.json();
-			console.log("Form submitted successfully:", result);
-			return result;
+			alert("Commentaire ajouté avec succès !");
 		} else {
-			console.error(
-				"Form submission failed:",
-				response.status,
-				response.statusText
-			);
+			alert("Erreur lors de l'ajout du commentaire.");
 		}
 	} catch (error) {
-		console.error("Error occurred:", error);
+		console.error("Erreur lors de l'ajout du commentaire:", error);
 	}
 }
 
@@ -221,10 +217,10 @@ async function connexion(event) {
 /**
  * This function sends a GET request to the server to retrieve all comments.
  */
-async function getComments() {
+async function getCommentsById(idRecipe) {
 	try {
 		// Send a GET request to the server to retrieve all comments
-		const response = await fetch(`${webServerAddress}/commentAffiche`, {
+		const response = await fetch(`${webServerAddress}/comment/`+idRecipe, {
 			method: "GET",
 		});
 		
@@ -325,6 +321,12 @@ async function afficherRecette(allRecettes, likes, translate) {
     // On vide le contenu précédent
     recetteListeDiv.innerHTML = ""; 
 
+	let tradButton;
+
+	if (!allRecettes || allRecettes.length === 0) {
+		recetteListeDiv.innerHTML = "<p>Aucune recette trouvée.</p>";
+		return;
+	}
     allRecettes.forEach(recette => {    
         // Création d'un conteneur pour chaque recette
         const recetteDiv = document.createElement("div");
@@ -359,21 +361,26 @@ async function afficherRecette(allRecettes, likes, translate) {
         image.id = "detail-image";
         image.alt = translate ? `Image de ${recette.name}` : `Image of ${recette.name}`;
 
-        const tradButton = document.createElement("button");
-        tradButton.classList.add("translateButton");
-        tradButton.id = "tradButton";
-        tradButton.textContent = translate ? "traduire" : "translate";
-        tradButton.addEventListener("click", async () => {
-            await traduireRecette(recette.id_recette);
-        });
+		if (role === "traducteur" && !recette.validated) {
+			tradButton = document.createElement("button");
+			tradButton.classList.add("translateButton");
+			tradButton.id = "tradButton";
+			tradButton.textContent = translate ? "traduire" : "translate";
+			tradButton.addEventListener("click", async () => {
+				await traduireRecette(recette.id_recette);
+			});
+			recetteDiv.appendChild(tradButton);
+		}
+
 
         // Gestion des likes
         let nombreLikes = 0;
         if (likes[recette.id_recette]) {
             nombreLikes = likes[recette.id_recette].likes.length;
         }
+		const userID = localStorage.getItem("id_user");
         let userLiked = false;
-        if (likes[recette.id_recette] && likes[recette.id_recette].likes.includes("67d1def77461c")) {
+        if (likes[recette.id_recette] && likes[recette.id_recette].likes.includes(userID)) {
             userLiked = true;
         }
         const likeButton = document.createElement("button");
@@ -400,8 +407,6 @@ async function afficherRecette(allRecettes, likes, translate) {
         recetteDiv.appendChild(auteur);
         recetteDiv.appendChild(description);
         recetteDiv.appendChild(likeButton);
-        recetteDiv.appendChild(tradButton);
-
         recetteListeDiv.appendChild(recetteDiv);
     });
 }
@@ -501,6 +506,14 @@ async function afficherDetailRecette(recette,likes,translate) {
 	
 	document.getElementById("modifierRecette").style.display = "block";
 	document.getElementById("closeButton").style.display = "block";
+	const role = localStorage.getItem("role");
+	const idUser = localStorage.getItem("id_user");
+
+	if (role === "administrateur" || idUser === recette.id_user) {
+		document.getElementById("modifierRecette").style.display = "block";
+	} else {
+		document.getElementById("modifierRecette").style.display = "none";
+	}
 
 	if (!recette) return;
 	const listeLikes = likes;
@@ -508,6 +521,13 @@ async function afficherDetailRecette(recette,likes,translate) {
 	const userID = localStorage.getItem("id_user");
 
 	const recetteData = recette;
+
+	const nombreLikes = listeLikes[recetteData.id_recette].likes.length;
+	if (!nombreLikes) {
+		listeLikes[recetteData.id_recette] = {
+			likes: []
+		};
+	}
 
 	if (translate)
 	{
@@ -528,7 +548,11 @@ async function afficherDetailRecette(recette,likes,translate) {
 			${recetteData.stepsFR?.map(step => `<li>${step}</li>`).join("") || "<li>Aucune étape</li>"}
 		</ol>
 		<button id="detailBouton" class="like-button" > ❤️ ${listeLikes[recetteData.id_recette].likes.length} </button>
+		<button id="listeCom" class="boutonModifier"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-square-dots-fill" viewBox="0 0 16 16">
+  				<path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.5a1 1 0 0 0-.8.4l-1.9 2.533a1 1 0 0 1-1.6 0L5.3 12.4a1 1 0 0 0-.8-.4H2a2 2 0 0 1-2-2zm5 4a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+		</svg> </button>
 		<button id="commBouton" class="commentaire-button"> Ajouter Commentaire </button>
+		
 	`;
 	}else
 	{
@@ -549,7 +573,10 @@ async function afficherDetailRecette(recette,likes,translate) {
 			${recetteData.steps?.map(step => `<li>${step}</li>`).join("") || "<li>No steps</li>"}
 		</ol>
 		<button id="detailBouton" class="like-button" > ❤️ ${listeLikes[recetteData.id_recette].likes.length} </button>
-		<button id="commBouton" class="commentaire-button"> Ajouter Commentaire </button>
+		<button id="listeCom" class="boutonModifier"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-square-dots-fill" viewBox="0 0 16 16">
+  				<path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.5a1 1 0 0 0-.8.4l-1.9 2.533a1 1 0 0 1-1.6 0L5.3 12.4a1 1 0 0 0-.8-.4H2a2 2 0 0 1-2-2zm5 4a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+		</svg> </button>
+		<button id="commBouton" class="commentaire-button"> Add a comment </button>
 	`;
 	}
 
@@ -579,8 +606,6 @@ async function afficherDetailRecette(recette,likes,translate) {
 		const translate = document.getElementById("translateCheckbox").checked;
 		await afficherDetailRecette(recipe, likes, translate);
 	});
-	// Si l'utilisateur est administrateur, afficher un bouton de validation si la recette n'est pas déjà validée
-    const role = localStorage.getItem("role");
     // Ici, on suppose que l'objet recette contient un attribut "validated" (true/false)
     if (role === "administrateur" && !recette.validated) {
         const validateBtn = document.createElement("button");
@@ -596,115 +621,170 @@ async function afficherDetailRecette(recette,likes,translate) {
     }
 
 	//modifier la recette
-	const buttonModifier = document.getElementById("modifierRecette");
+	if (role === "administrateur" || idUser === recetteData.id_user) {
+		const buttonModifier = document.getElementById("modifierRecette");
 
-	if (buttonModifier) {
-		buttonModifier.addEventListener("click", async (event) => {
-			event.preventDefault();
+		if (buttonModifier) {
+			buttonModifier.addEventListener("click", async (event) => {
+				event.preventDefault();
+				document.getElementById("modifierRecette").style.display = "none";
+				document.getElementById("closeButton").style.display = "none";
+				const detailDiv = document.getElementById("recetteDetail");
+
+				let withoutHTML = "";
+				for (let i = 0; i < recetteData.without.length; i++) {
+					withoutHTML += `<label for="without${i}">Restriction ${i+1} :</label>
+					<input type="text" id="without${i}" value="${recetteData.without[i]}">`;
+				}
+
+				let ingredientsHTML = "";
+				for (let i = 0; i < recetteData.ingredients.length; i++) {
+					ingredientsHTML += `<label for="ingredient${i}">Ingrédient ${i+1} :</label>
+					<input type="text" id="ingredient${i}" value="${recetteData.ingredients[i].name}">
+					<label for="quantity${i}">Quantité :</label>
+					<input type="text" id="quantity${i}" value="${recetteData.ingredients[i].quantity}">
+					<label for="type${i}">Type :</label>
+					<input type="text" id="type${i}" value="${recetteData.ingredients[i].type}">`;
+				}
+
+				let stepsHTML = "";
+				for (let i = 0; i < recetteData.steps.length; i++) {
+					stepsHTML += `<label for="step${i}">Étape ${i+1} :</label>
+					<textarea id="step${i}" rows="2">${recetteData.steps[i]}</textarea>`;
+				}
+
+				detailDiv.innerHTML = `
+					<button id="annulerModif" class="annuler-button">Annuler</button>
+					<div id="modifierRecetteForm">
+						<label for="name">Nom de la recette :</label>
+						<input type="text" id="nomInput" value="${recetteData.name}">
+						<label for="author">Auteur : </label>
+						<input type="text" id="authorInput" value="${recetteData.author}">
+						${withoutHTML}
+						${ingredientsHTML}
+						${stepsHTML}
+						<label for="imageUpload">Télécharger une nouvelle image :</label>
+						<input type="file" id="imageUpload" name="imageUpload" accept="image/*" onchange="previewImage(event)" />
+						<button id="modifRecette">Modifier Recette</button>
+					</div>
+				`;
+
+				const annulerModif = document.getElementById("annulerModif");
+				if (annulerModif) {
+					annulerModif.addEventListener("click", async () => {
+						// Recharger la recette pour annuler les modifications
+						const updatedRecipe = await getRecettesById(recetteData.id_recette);
+						const likes = await getLike();
+						const translate = document.getElementById("translateCheckbox").checked;
+						await afficherDetailRecette(updatedRecipe, likes, translate);
+					});
+				}
+
+				const buttonModify = document.getElementById("modifRecette");
+				if (buttonModify) {
+					buttonModify.addEventListener("click", async () => {					
+					
+						const recetteJSON = {
+							name: document.getElementById("nomInput").value,
+							author: document.getElementById("authorInput").value,
+							without: [],
+							ingredients: [],
+							steps: [],
+							imageURL: recetteData.imageURL,
+						};
+						const withoutInputs = document.querySelectorAll("[id^='without']");
+						for (let i = 0; i < withoutInputs.length; i++) {
+							const withoutValue = document.getElementById(`without${i}`).value;
+							if (withoutValue) {
+								recetteJSON.without.push(withoutValue);
+							}
+						}
+						const ingredientInputs = document.querySelectorAll("[id^='ingredient']");
+						const quantityInputs = document.querySelectorAll("[id^='quantity']");
+						const typeInputs = document.querySelectorAll("[id^='type']");
+						for (let i = 0; i < ingredientInputs.length; i++) {
+
+							recetteJSON.ingredients.push({
+								name: ingredientInputs[i].value,
+								quantity: quantityInputs[i].value,
+								type: typeInputs[i].value,
+							});
+						}
+						const stepInputs = document.querySelectorAll("[id^='step']");
+						for (let i = 0; i < stepInputs.length; i++) {
+							const stepValue = document.getElementById(`step${i}`).value;
+							if (stepValue) {
+								recetteJSON.steps.push(stepValue);
+							}
+						}
+						const imageUpload = document.getElementById("imageUpload");
+						if (imageUpload.files.length > 0) {
+							recetteJSON.image = imageUpload.files[0];
+						}
+
+						await modifierRecette(recetteData.id_recette, recetteJSON);
+						const likes = await getLike();
+						const translate = document.getElementById("translateCheckbox").checked;
+						await afficherDetailRecette(recetteData, likes, translate);
+					});
+				}
+			});
+		}
+	}
+		
+	
+
+	const buttonaddCom = document.getElementById("commBouton");
+	if(buttonaddCom)
+	{
+		buttonaddCom.addEventListener("click", async () => {
 			document.getElementById("modifierRecette").style.display = "none";
-			document.getElementById("closeButton").style.display = "none";
-			const detailDiv = document.getElementById("recetteDetail");
-
-			let withoutHTML = "";
-			for (let i = 0; i < recetteData.without.length; i++) {
-				withoutHTML += `<label for="without${i}">Restriction ${i+1} :</label>
-				<input type="text" id="without${i}" value="${recetteData.without[i]}">`;
-			}
-
-			let ingredientsHTML = "";
-			for (let i = 0; i < recetteData.ingredients.length; i++) {
-				ingredientsHTML += `<label for="ingredient${i}">Ingrédient ${i+1} :</label>
-				<input type="text" id="ingredient${i}" value="${recetteData.ingredients[i].name}">
-				<label for="quantity${i}">Quantité :</label>
-				<input type="text" id="quantity${i}" value="${recetteData.ingredients[i].quantity}">
-				<label for="type${i}">Type :</label>
-				<input type="text" id="type${i}" value="${recetteData.ingredients[i].type}">`;
-			}
-
-			let stepsHTML = "";
-			for (let i = 0; i < recetteData.steps.length; i++) {
-				stepsHTML += `<label for="step${i}">Étape ${i+1} :</label>
-				<textarea id="step${i}" rows="2">${recetteData.steps[i]}</textarea>`;
-			}
-
-			detailDiv.innerHTML = `
-				<button id="annulerModif" class="annuler-button">Annuler</button>
-				<div id="modifierRecetteForm">
-					<label for="name">Nom de la recette :</label>
-					<input type="text" id="nomInput" value="${recetteData.name}">
-					<label for="author">Auteur : </label>
-					<input type="text" id="authorInput" value="${recetteData.author}">
-					${withoutHTML}
-					${ingredientsHTML}
-					${stepsHTML}
-					<label for="imageUpload">Télécharger une nouvelle image :</label>
-					<input type="file" id="imageUpload" name="imageUpload" accept="image/*" onchange="previewImage(event)" />
-					<button id="modifRecette">Modifier Recette</button>
-				</div>
+			const divFormulaire = document.getElementById("recetteDetail");
+			divFormulaire.innerHTML = `
+				<h2>Ajouter un Commentaire</h2>
+				<label for="comment">Commentaire :</label>
+				<textarea id="comment" name="comment" rows="4"></textarea>
+				<button class="boutonRecette" id="envoyerCommentaire">Envoyer le commentaire</button>
 			`;
 
-			const annulerModif = document.getElementById("annulerModif");
-			if (annulerModif) {
-				annulerModif.addEventListener("click", async () => {
-					// Recharger la recette pour annuler les modifications
-					const updatedRecipe = await getRecettesById(recetteData.id_recette);
-					const likes = await getLike();
-					const translate = document.getElementById("translateCheckbox").checked;
-					await afficherDetailRecette(updatedRecipe, likes, translate);
-				});
-			}
-
-			const buttonModify = document.getElementById("modifRecette");
-			if (buttonModify) {
-				buttonModify.addEventListener("click", async () => {					
-				
-					const recetteJSON = {
-						name: document.getElementById("nomInput").value,
-						author: document.getElementById("authorInput").value,
-						without: [],
-						ingredients: [],
-						steps: [],
-						imageURL: recetteData.imageURL,
-					};
-					const withoutInputs = document.querySelectorAll("[id^='without']");
-					for (let i = 0; i < withoutInputs.length; i++) {
-						const withoutValue = document.getElementById(`without${i}`).value;
-						if (withoutValue) {
-							recetteJSON.without.push(withoutValue);
-						}
-					}
-					const ingredientInputs = document.querySelectorAll("[id^='ingredient']");
-					const quantityInputs = document.querySelectorAll("[id^='quantity']");
-					const typeInputs = document.querySelectorAll("[id^='type']");
-					for (let i = 0; i < ingredientInputs.length; i++) {
-
-						recetteJSON.ingredients.push({
-							name: ingredientInputs[i].value,
-							quantity: quantityInputs[i].value,
-							type: typeInputs[i].value,
-						});
-					}
-					const stepInputs = document.querySelectorAll("[id^='step']");
-					for (let i = 0; i < stepInputs.length; i++) {
-						const stepValue = document.getElementById(`step${i}`).value;
-						if (stepValue) {
-							recetteJSON.steps.push(stepValue);
-						}
-					}
-					const imageUpload = document.getElementById("imageUpload");
-					if (imageUpload.files.length > 0) {
-						recetteJSON.image = imageUpload.files[0];
-					}
-
-					await modifierRecette(recetteData.id_recette, recetteJSON);
-					const likes = await getLike();
-					const translate = document.getElementById("translateCheckbox").checked;
-					await afficherDetailRecette(recetteData, likes, translate);
-				});
-			}
+			const boutonEnvoyer = document.getElementById("envoyerCommentaire");
+			boutonEnvoyer.addEventListener("click", async function () {
+				await sendComment();
+				fermerModale();
+			});
 		});
 	}
 
+	const buttonListeCom = document.getElementById("listeCom");
+	if (buttonListeCom) {
+		buttonListeCom.addEventListener("click", async () => {
+			document.getElementById("modifierRecette").style.display = "none";
+			const comments = await getCommentsById(recetteData.id_recette);
+			const divFormulaire = document.getElementById("recetteDetail");
+			divFormulaire.innerHTML = `
+				<h2>Liste des Commentaires</h2>
+				<div id="comment-list"></div>
+				<button class="boutonRecette" id="fermerCommentaire">Fermer</button>
+			`;
+			const buttonFermer = document.getElementById("fermerCommentaire");
+			buttonFermer.addEventListener("click", async () => {
+				fermerModale();
+			});			
+
+			console.log("commentaire : ",comments);
+			const commentListeDiv = document.getElementById("comment-list");
+			commentListeDiv.innerHTML = "";
+			const ul = document.createElement("ul");
+			for(let i = 0; i < comments.length; i++)
+			{
+				const li = document.createElement("li");
+				li.innerHTML = (`${comments[i].id_user} : ${comments[i].comment}`);
+				ul.appendChild(li);
+			}
+			commentListeDiv.appendChild(ul);
+		}
+		);
+	}
 
 	//si l'utilisateur clique sur la croix
 	const fermerModal = document.querySelector(".close");
@@ -792,6 +872,12 @@ async function fermerModale() {
 
 async function formAjouter()
 {
+	const role = localStorage.getItem("role");
+	if (role !== "chef")
+	{
+		alert("Vous n'avez pas les droits nécessaires pour ajouter une recette.");
+		return;
+	}
 	const modal = document.getElementById("formulaireModal");
 	modal.style.display = "flex";
 	document.body.classList.add("modal-open");
@@ -1062,6 +1148,7 @@ async function deconnexionUser() {
 			window.location.href = result.redirect;
 			localStorage.removeItem("id_user");
 			localStorage.removeItem("role");
+			sessionStorage.removeItem("recetteTrad");
 			return result;
 		} else {
 			console.error(
@@ -1087,7 +1174,6 @@ async function traduireRecette(idRecipe)
 		
 		if (response.ok) {
 			const result = await response.json();
-			console.log(JSON.stringify(result.recipe));
 			sessionStorage.setItem("recetteTrad", JSON.stringify(result.recipe));
 			window.location.href = result.redirect;
 			return result;

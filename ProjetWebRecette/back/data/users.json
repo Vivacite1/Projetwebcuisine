@@ -34,5 +34,11 @@
         "mail": "fiacremitokpe@gmail.com",
         "password": "$2y$12$Z\/cfgnnjeYnRIDWHNugtsuxZns1kNaYYEJ1g0xbVVN5HYL90yBrau",
         "role": "administrateur"
+    },
+    {
+        "id_user": "680789d53b4ff",
+        "mail": "alban@gmail.com",
+        "password": "$2y$12$saEgaD1WxW8Dz5I6A2TxiObnkE3PiNDIZaORjbX7PGMOaNdQX.meG",
+        "role": "cuisinier"
     }
 ]
