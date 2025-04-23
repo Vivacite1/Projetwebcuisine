@@ -34,7 +34,7 @@ if (buttonDeconnexion) {
 async function getUsers() {
     try {
 		// Send a GET request to the server to retrieve all comments
-		const response = await fetch(`${webServerAddress}/user`, {
+		const response = await fetch(`${webServerAddress}/back/user`, {
 			method: "GET",
 		});
 		
@@ -56,7 +56,7 @@ async function getUsers() {
 
 async function getDemandes() {
     try {
-		const response = await fetch(`${webServerAddress}/demande`, {
+		const response = await fetch(`${webServerAddress}/back/demande`, {
 			method: "GET",
 		});
 		
@@ -151,7 +151,7 @@ async function accepterDemande(idUserAsking, role) {
         params.append("role", role);
         params.append("id_userAsking", idUserAsking);
 
-        const response = await fetch(`${webServerAddress}/role/accept/${idUser}`, {
+        const response = await fetch(`${webServerAddress}/back/role/accept/${idUser}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -179,7 +179,7 @@ async function accepterDemande(idUserAsking, role) {
 async function deconnexionUser() {
 	try {
 		// Send a GET request to the server to retrieve all comments
-		const response = await fetch(`${webServerAddress}/logout`, {
+		const response = await fetch(`${webServerAddress}/back/logout`, {
 			method: "POST",
 		});
 		

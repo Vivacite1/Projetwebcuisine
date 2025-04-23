@@ -40,5 +40,17 @@
         "mail": "alban@gmail.com",
         "password": "$2y$12$saEgaD1WxW8Dz5I6A2TxiObnkE3PiNDIZaORjbX7PGMOaNdQX.meG",
         "role": "cuisinier"
+    },
+    {
+        "id_user": "6807c767097c5",
+        "mail": "emmacousin2@gmail.com",
+        "password": "$2y$12$f0yyeloc\/B6HDgRXunlMh.SNC.qXx.\/upx6rdXtcW7prM\/Z0hJwr2",
+        "role": "cuisinier"
+    },
+    {
+        "id_user": "6807e8a7b870f",
+        "mail": "severine@gmail.com",
+        "password": "$2y$12$99Ox\/1DZAEGOV19y0.kHCOpRioiA5z\/Iy2QmBIsbxLHo8DBhG6qTC",
+        "role": "chef"
     }
 ]

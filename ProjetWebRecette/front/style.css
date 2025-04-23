@@ -1,10 +1,29 @@
-/* css pour le page demanderRole*/
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
 }
+
+body {
+	display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Assure que le body prend au moins toute la hauteur de la fenêtre */
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: fixed; /* Seulement le pseudo-élément est fixe */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("images/index.jpg");
+    background-size: cover;
+    background-position: center;
+    z-index: -1; /* Derrière tout le contenu */
+}
+
 
 .navbar {
     background-color: white;
@@ -203,9 +222,12 @@ input[type="text"], input[type="password"] {
 }
 
 .recette-card {
+    display: flex;
+    flex-direction: column;
     position: relative;
     padding-bottom: 60px;
     text-align: center;
+    align-items: center; /* centre horizontalement tous les éléments */
     box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.2);
     border-radius: 15px;
     padding: 20px;
@@ -848,3 +870,103 @@ body.modal-open #recette-list {
     text-align: center;
 }
 
+/* .background-content {
+    background-image: url("images/index.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    flex: 1;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	z-index: 1;
+} 
+*/
+.background-content {
+    /* Supprimer les propriétés de fond ici */
+    flex: 1; /* Prend tout l'espace disponible */
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    position: relative; /* Pour qu'il reste au-dessus du pseudo-élément */
+    z-index: 1;
+    width: 100%;
+    background-color: #6C63FF;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+.recetteCard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.delete-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+}
+.delete-button:active {
+    transform: scale(0.95);
+}
+.delete-button svg {
+    width: 20px;
+    height: 20px;
+    fill: #333;
+}
+.delete-button:hover svg {
+    fill: #ff4d4d; /* Rouge doux */
+}
+.delete-button:active svg {
+    fill: #c82333; /* Rouge plus foncé */
+}
+
+.delete-buttonCom {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    margin-left: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #dc3545; /* rouge "danger" Bootstrap */
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.delete-buttonCom:hover {
+    color: #a71d2a;
+    transform: scale(1.1);
+}
+
+.delete-buttonCom svg {
+    pointer-events: none;
+}
+.delete-buttonCom:active {
+    transform: scale(0.95);
+}
+.delete-buttonCom svg {
+    width: 20px;
+    height: 20px;
+    fill: #333;
+}
+.delete-buttonCom:hover svg {
+    fill: #ff4d4d; /* Rouge doux */
+}
+.delete-buttonCom:active svg {
+    fill: #c82333; /* Rouge plus foncé */
+}
+
+
+
+
+  

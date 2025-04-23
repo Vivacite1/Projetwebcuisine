@@ -177,67 +177,144 @@ class RecetteController
     public function handlePostRecetteRequest(array $params): void
     {
         header('Content-Type: application/json; charset=utf-8');
-        
-        // Vérifier si le Content-Type est correct
-        if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
+
+        error_log("DEBUG POST: " . print_r($_POST, true));
+        error_log("DEBUG FILES: " . print_r($_FILES, true));
+
+        // Récupération des données POST
+        $nameRecipe = $_POST['name'] ?? '';
+        $nameAuthor = $_POST['author'] ?? '';
+
+        $without     = isset($_POST['restriction']) ? json_decode($_POST['restriction'], true) : [];
+        $ingredients = isset($_POST['ingredients']) ? json_decode($_POST['ingredients'], true) : [];
+        $steps       = isset($_POST['steps']) ? json_decode($_POST['steps'], true) : [];
+
+        if (!$nameRecipe || !$nameAuthor || empty($without) || empty($ingredients) || empty($steps)) {
             http_response_code(400);
-            echo json_encode(['error' => 'Invalid Content-Type header']);
+            echo json_encode(['error' => 'Champs requis manquants']);
             return;
         }
-    
-        // Lire le contenu JSON de la requête
-        $jsonData = file_get_contents('php://input');
-    
-        // Décoder les données JSON en tableau PHP
-        $data = json_decode($jsonData, true);
-    
-        // Vérifier si la décodification a réussi
-        if (json_last_error() !== JSON_ERROR_NONE) {
+
+        // Traitement de l'image
+        $imageURL = "";
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = 'uploads/';
+            $uniqueFileName = uniqid() . '_' . basename($_FILES['image']['name']);
+            $targetFilePath = $uploadDir . $uniqueFileName;
+
+            // Créer le dossier s’il n’existe pas
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            // Déplacement du fichier
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFilePath)) {
+                $imageURL = $targetFilePath;
+            } else {
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur lors du déplacement de l’image']);
+                return;
+            }
+        } else {
             http_response_code(400);
-            echo json_encode(['error' => 'Invalid JSON data']);
+            echo json_encode(['error' => 'Aucune image reçue ou erreur lors du téléchargement']);
             return;
         }
-    
-        $idRecipe       = uniqid(); 
-        $nameRecipe     = $data['name'] ?? '';
-        $nameRecipeFR   = "";
-        $nameAuthor     = $params['id_user'];
-        $without        = $data['without'] ?? [];
-        $ingredient     = $data['ingredients'] ?? [];
-        $ingredientsFR  = "";
-        $steps          = $data['steps'] ?? [];
-        $stepsFR        = "";
-        $imageURL       = $data['imageURL'] ?? '';
-        $originalURL    = "";
-    
-        // Valider les champs principaux
-        if (!$nameRecipe || !$nameAuthor || !$without || !$ingredient || !$steps) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Missing required fields']);
-            return;
-        }
-    
-        // Créer un nouveau tableau de recette
+
+        // Génération de l'ID unique
+        $idRecipe = uniqid();
+
+        // Création de la recette
         $newRecette = [
-            'id_recette'   => $idRecipe,
-            'name'         => $nameRecipe,
-            'nameFR'       => $nameRecipeFR,
-            'author'       => $nameAuthor,
-            'without'      => $without,
-            'ingredients'  => $ingredient,
-            'ingredientsFR'=> $ingredientsFR,
-            'steps'        => $steps,
-            'stepsFR'      => $stepsFR,
-            'imageURL'     => $imageURL,
-            'originalURL'  => $originalURL,
+            'id_recette'    => $idRecipe,
+            'name'          => $nameRecipe,
+            'nameFR'        => '',
+            'author'        => $nameAuthor,
+            'without'       => $without,
+            'ingredients'   => $ingredients,
+            'ingredientsFR' => '',
+            'steps'         => $steps,
+            'stepsFR'       => '',
+            'imageURL'      => $imageURL,
+            'originalURL'   => '',
         ];
-    
-        // Sauvegarder la recette (fonction à adapter à votre logique de stockage)
-        $this->saveRecette($newRecette);    
-        // Répondre avec les données de la recette
+
+        // Sauvegarde de la recette
+        $this->saveRecette($newRecette);
+
+        // Réponse
         http_response_code(200);
-        echo json_encode(['message' => 'Recette added successfully!', 'data' => $newRecette]);
+        echo json_encode([
+            'message' => 'Recette ajoutée avec succès !',
+            'data' => $newRecette
+        ]);
     }
+
+
+    // public function handlePostRecetteRequest(array $params): void
+    // {
+    //     header('Content-Type: application/json; charset=utf-8');
+        
+    //     // Vérifier si le Content-Type est correct
+    //     if ($_SERVER['CONTENT_TYPE'] !== 'application/json') {
+    //         http_response_code(400);
+    //         echo json_encode(['error' => 'Invalid Content-Type header']);
+    //         return;
+    //     }
+    
+    //     // Lire le contenu JSON de la requête
+    //     $jsonData = file_get_contents('php://input');
+    
+    //     // Décoder les données JSON en tableau PHP
+    //     $data = json_decode($jsonData, true);
+    
+    //     // Vérifier si la décodification a réussi
+    //     if (json_last_error() !== JSON_ERROR_NONE) {
+    //         http_response_code(400);
+    //         echo json_encode(['error' => 'Invalid JSON data']);
+    //         return;
+    //     }
+    
+    //     $idRecipe       = uniqid(); 
+    //     $nameRecipe     = $data['name'] ?? '';
+    //     $nameRecipeFR   = "";
+    //     $nameAuthor     = $params['id_user'];
+    //     $without        = $data['without'] ?? [];
+    //     $ingredient     = $data['ingredients'] ?? [];
+    //     $ingredientsFR  = "";
+    //     $steps          = $data['steps'] ?? [];
+    //     $stepsFR        = "";
+    //     $imageURL       = $data['imageURL'] ?? '';
+    //     $originalURL    = "";
+    
+    //     // Valider les champs principaux
+    //     if (!$nameRecipe || !$nameAuthor || !$without || !$ingredient || !$steps) {
+    //         http_response_code(400);
+    //         echo json_encode(['error' => 'Missing required fields']);
+    //         return;
+    //     }
+    
+    //     // Créer un nouveau tableau de recette
+    //     $newRecette = [
+    //         'id_recette'   => $idRecipe,
+    //         'name'         => $nameRecipe,
+    //         'nameFR'       => $nameRecipeFR,
+    //         'author'       => $nameAuthor,
+    //         'without'      => $without,
+    //         'ingredients'  => $ingredient,
+    //         'ingredientsFR'=> $ingredientsFR,
+    //         'steps'        => $steps,
+    //         'stepsFR'      => $stepsFR,
+    //         'imageURL'     => $imageURL,
+    //         'originalURL'  => $originalURL,
+    //     ];
+    
+    //     // Sauvegarder la recette (fonction à adapter à votre logique de stockage)
+    //     $this->saveRecette($newRecette);    
+    //     // Répondre avec les données de la recette
+    //     http_response_code(200);
+    //     echo json_encode(['message' => 'Recette added successfully!', 'data' => $newRecette]);
+    // }
 
     public function handlePostRecipeModifyRequest(array $params)
     {
@@ -289,12 +366,12 @@ class RecetteController
        }
        else 
        {
-           // 🆕 Ajouter une nouvelle recette avec le premier like
+           // Ajouter une nouvelle recette avec le premier like
            $allLikes[$idRecipe] = ["likes" => [$idUser]];
            $message = "Nouvelle recette likée";
        }
        
-       // 💾 Sauvegarde dans le fichier JSON
+       // Sauvegarde dans le fichier JSON
        file_put_contents($this->filePathLike, json_encode($allLikes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
        
        http_response_code(201);
@@ -319,6 +396,25 @@ class RecetteController
 		return json_decode($content, true) ?? [];
     }
     
+    public function handlePostDeleteRecipeRequest(array $params)
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        
+        $idRecipe = $params['id_recipe'];
+        $recettes = $this->getAllRecette();
+        $recetteIndex = array_search($idRecipe, array_column($recettes, 'id_recette'));
+
+        if ($recetteIndex !== false) {
+            unset($recettes[$recetteIndex]);
+            file_put_contents($this->filePath, json_encode(array_values($recettes), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            http_response_code(200);
+            echo json_encode(['message' => 'Recette supprimée avec succès']);
+        } else {
+            http_response_code(404);
+            echo json_encode(['message' => 'Recette non trouvée']);
+        }
+    }
+
     public function getRecipeByID($idRecipe)
     {
         $recettes = $this->getAllRecette();

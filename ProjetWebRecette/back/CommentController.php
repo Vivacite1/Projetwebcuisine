@@ -128,6 +128,7 @@ class CommentController
 	public function getCommentById($idRecipe)
 	{
 		$comments = $this->getAllComments();
+		error_log(print_r($comments, true));
 		if (empty($comments)) {
 			http_response_code(404);
 			echo json_encode(['error' => 'No comments found']);
@@ -136,35 +137,33 @@ class CommentController
 
 		$filteredComments = [];
 
-		foreach ($comments as $comment) {
+		foreach ($comments as $idComment => $comment) {
 			if ($comment['id_recipe'] == $idRecipe) {
-				$filteredComments[] = $comment;
+				$commentSend['id_comment'] = $idComment;
+				$commentSend['id_user']    = $comment['id_user'];
+				$commentSend['id_recipe']  = $comment['id_recipe'];
+				$commentSend['comment']    = $comment['comment'];
+				
+				$filteredComments[] = $commentSend;
 			}
 		}
+
+		error_log(print_r($filteredComments, true));
 		return $filteredComments;
 	}
 
 	public function handleDeleteCommentRequest(array $params): void
 	{	
-		$idUser = $params['id_user'];
 		$idComment = $params['id_comment'];
-		$user = $this->authController->getUserByID($idUser);
-
-		if (!$user['role'] == 'administrateur') {
-			http_response_code(401);
-			echo json_encode(['error' => 'Unauthorized']);
-			return;
-		}
-
-		if(!isset($comments[$id_comment]))
-		{
-			http_response_code(401);
-			echo json_encode(['message' => 'Le commentaire n existe pas']);
-		}
 		
 		$contenu = file_get_contents($this->filePath);
 		$comments = json_decode($contenu,true);
-		print_r($comments);
+		if(!isset($comments[$idComment]))
+		{
+			http_response_code(404);
+			echo json_encode(['message' => 'Le commentaire n existe pas']);
+			return;
+		}
 		unset($comments[$idComment]);
 		$comments = array_values($comments);
 		

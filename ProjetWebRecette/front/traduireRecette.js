@@ -181,7 +181,7 @@ async function saveModif(idRecipe)
 	console.log(recetteDataJson);
 	console.log("await fetch(${webServerAddress}/recipe/modify/"+idRecipe);
 	try {
-        const response = await fetch(`${webServerAddress}/recipe/modify/`+idRecipe, {
+        const response = await fetch(`${webServerAddress}/back/recipe/modify/`+idRecipe, {
             method: "POST",
 			headers: { "Content-Type": "application/json" },
             body: JSON.stringify(recetteDataJson),
@@ -201,7 +201,7 @@ async function saveModif(idRecipe)
 async function deconnexionUser() {
 	try {
 		// Send a GET request to the server to retrieve all comments
-		const response = await fetch(`${webServerAddress}/logout`, {
+		const response = await fetch(`${webServerAddress}/back/logout`, {
 			method: "POST",
 		});
 		

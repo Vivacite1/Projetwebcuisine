@@ -61,7 +61,7 @@ async function demandeRole(role) {
       params.append("role", role);
       params.append("id_user", idUser);
       
-      const response = await fetch(`${webServerAddress}/role/ask`, {
+      const response = await fetch(`${webServerAddress}/back/role/ask`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
@@ -86,7 +86,7 @@ async function demandeRole(role) {
 async function deconnexionUser() {
 	try {
 		// Send a GET request to the server to retrieve all comments
-		const response = await fetch(`${webServerAddress}/logout`, {
+		const response = await fetch(`${webServerAddress}/back/logout`, {
 			method: "POST",
 		});
 		

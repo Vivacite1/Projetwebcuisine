@@ -673,26 +673,26 @@
         "originalURL": ""
     },
     {
-        "id_recette": "67e1ae4a1892b",
-        "name": "test",
+        "id_recette": "6809084f5555c",
+        "name": "evz",
         "nameFR": "",
-        "nameAuthor": "67dbf72c672b5",
+        "author": "ev",
         "without": [
-            "test✖"
+            "fez✖"
         ],
         "ingredients": [
             {
-                "quantity": "test",
-                "name": "test",
-                "type": "test"
+                "quantity": "fez",
+                "name": "fez",
+                "type": "fez"
             }
         ],
         "ingredientsFR": "",
         "steps": [
-            "test✖"
+            "fez✖"
         ],
         "stepsFR": "",
-        "imageURL": "C:\\fakepath\\4777bc26067bc7eb94715f1b9624f647.png",
+        "imageURL": "uploads\/6809084f54b56_Capture d’écran 2025-04-22 à 15.39.11.png",
         "originalURL": ""
     }
 ]
