@@ -235,7 +235,7 @@ class RecetteController
             'ingredientsFR' => '',
             'steps'         => $steps,
             'stepsFR'       => '',
-            'imageURL'      => $imageURL,
+            'imageURL'      => "http://localhost:8080/back/$imageURL",
             'originalURL'   => '',
         ];
 

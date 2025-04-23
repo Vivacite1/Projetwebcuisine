@@ -617,6 +617,12 @@ async function afficherDetailRecette(recette,likes,translate) {
 
 	const recetteData = recette;
 
+	// pour éviter les erreurs si la recette n'a pas de likes
+	if (!listeLikes[recetteData.id_recette]) {
+		listeLikes[recetteData.id_recette] = {
+			likes: []
+		};
+	}
 	const nombreLikes = listeLikes[recetteData.id_recette].likes.length;
 	if (!nombreLikes) {
 		listeLikes[recetteData.id_recette] = {

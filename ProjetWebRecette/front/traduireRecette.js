@@ -22,6 +22,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 window.addEventListener("beforeunload", async () => {
+	// si la page est rechargée cela créer une erreur  [Error] Error occurred: – TypeError: Load failed
 	if (localStorage.getItem("id_user")) {
 		await deconnexionUser();
 	}

@@ -673,26 +673,49 @@
         "originalURL": ""
     },
     {
-        "id_recette": "6809084f5555c",
-        "name": "evz",
+        "id_recette": "68090ed25fef6",
+        "name": "bizr",
         "nameFR": "",
-        "author": "ev",
+        "author": "inuzib",
         "without": [
-            "fez✖"
+            "biur✖"
         ],
         "ingredients": [
             {
-                "quantity": "fez",
-                "name": "fez",
-                "type": "fez"
+                "quantity": "bi",
+                "name": "iubgrziub",
+                "type": "iubriub"
             }
         ],
         "ingredientsFR": "",
         "steps": [
-            "fez✖"
+            "izizr✖"
         ],
         "stepsFR": "",
-        "imageURL": "uploads\/6809084f54b56_Capture d’écran 2025-04-22 à 15.39.11.png",
+        "imageURL": "back\/uploads\/68090ed25f700_2cm37Vx.jpg",
+        "originalURL": ""
+    },
+    {
+        "id_recette": "68090fb7b06df",
+        "name": "vez",
+        "nameFR": "",
+        "author": "vez",
+        "without": [
+            "vez✖"
+        ],
+        "ingredients": [
+            {
+                "quantity": "vez",
+                "name": "evz",
+                "type": "zev"
+            }
+        ],
+        "ingredientsFR": "",
+        "steps": [
+            "zve✖"
+        ],
+        "stepsFR": "",
+        "imageURL": "http:\/\/localhost:8080\/back\/uploads\/68090fb7b0492_4777bc26067bc7eb94715f1b9624f647.png",
         "originalURL": ""
     }
 ]
