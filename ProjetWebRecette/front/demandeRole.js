@@ -1,6 +1,34 @@
-
+"use strict"
 
 const webServerAddress = "http://localhost:8080";
+
+const role = localStorage.getItem("role");
+
+document.addEventListener("DOMContentLoaded", async () => {
+	const idUser = localStorage.getItem("id_user");
+	const role = localStorage.getItem("role");
+	const pageActuelle = window.location.pathname.split("/").pop();
+
+	// Si on est sur index.html et que l'utilisateur n'est pas connecté
+	if (pageActuelle === "demanderRole.html" && (!idUser || !role)) {
+		alert("⚠️ Vous devez être connecté pour accéder à cette page.");
+		window.location.href = "connexion.html"; // ou autre page de ton choix
+	}
+});
+
+window.addEventListener("beforeunload", async () => {
+	if (localStorage.getItem("id_user")) {
+		await deconnexionUser();
+	}
+});
+
+const listeUtilisateur = document.getElementById("listUtil")
+if (role !== "administrateur")
+{
+	if (listeUtilisateur) {
+		listeUtilisateur.style.display = "none";
+	}
+}
 
 const btnChef = document.getElementById("btn-chef");
 if(btnChef)
@@ -43,7 +71,7 @@ async function demandeRole(role) {
       params.append("role", role);
       params.append("id_user", idUser);
       
-      const response = await fetch(`${webServerAddress}/role/ask`, {
+      const response = await fetch(`${webServerAddress}/back/role/ask`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"
@@ -68,7 +96,7 @@ async function demandeRole(role) {
 async function deconnexionUser() {
 	try {
 		// Send a GET request to the server to retrieve all comments
-		const response = await fetch(`${webServerAddress}/logout`, {
+		const response = await fetch(`${webServerAddress}/back/logout`, {
 			method: "POST",
 		});
 		
@@ -78,6 +106,7 @@ async function deconnexionUser() {
 			window.location.href = result.redirect;
 			localStorage.removeItem("id_user");
 			localStorage.removeItem("role");
+      sessionStorage.removeItem("recetteTrad");
 			return result;
 		} else {
 			console.error(

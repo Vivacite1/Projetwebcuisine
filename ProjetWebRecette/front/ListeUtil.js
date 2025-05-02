@@ -2,16 +2,50 @@
 
 const webServerAddress = "http://localhost:8080";
 
+const role = localStorage.getItem("role");
+
 document.addEventListener("DOMContentLoaded", async () => {
-   const users      = await getUsers();
-   const demandes   = await getDemandes();
-   await afficherUser(users, demandes);
+    const idUser = localStorage.getItem("id_user");
+	const role = localStorage.getItem("role");
+	const pageActuelle = window.location.pathname.split("/").pop();
+
+	// Si on est sur index.html et que l'utilisateur n'est pas connecté
+	if (pageActuelle === "listeUtilisateur.html" && (!idUser || !role)) {
+		alert("⚠️ Vous devez être connecté pour accéder à cette page.");
+		window.location.href = "connexion.html"; // ou autre page de ton choix
+	}else{
+        const users      = await getUsers();
+        const demandes   = await getDemandes();
+        await afficherUser(users, demandes);
+    }
 });
+
+window.addEventListener("beforeunload", async () => {
+	if (localStorage.getItem("id_user")) {
+		await deconnexionUser();
+	}
+});
+
+const listeUtilisateur = document.getElementById("listUtil")
+if (role !== "administrateur")
+{
+	if (listeUtilisateur) {
+		listeUtilisateur.style.display = "none";
+	}
+}
+
+
+const buttonDeconnexion = document.getElementById("deconnexion");
+if (buttonDeconnexion) {
+	buttonDeconnexion.addEventListener("click", async () => {
+		await deconnexionUser();
+	});
+}
 
 async function getUsers() {
     try {
 		// Send a GET request to the server to retrieve all comments
-		const response = await fetch(`${webServerAddress}/user`, {
+		const response = await fetch(`${webServerAddress}/back/user`, {
 			method: "GET",
 		});
 		
@@ -33,7 +67,7 @@ async function getUsers() {
 
 async function getDemandes() {
     try {
-		const response = await fetch(`${webServerAddress}/demande`, {
+		const response = await fetch(`${webServerAddress}/back/demande`, {
 			method: "GET",
 		});
 		
@@ -67,7 +101,6 @@ async function afficherUser(users, demandes) {
     const thead = document.createElement("thead");
     thead.innerHTML = `
         <tr>
-            <th>ID Utilisateur</th>
             <th>Email</th>
             <th>Rôle Actuel</th>
             <th>Demande de Rôle</th>
@@ -83,7 +116,6 @@ async function afficherUser(users, demandes) {
         const row = document.createElement("tr");
 
         row.innerHTML = `
-            <td>${user.id_user}</td>
             <td>${user.mail}</td>
             <td>${user.role}</td>
             <td>${demande ? demande.role : "Aucune demande"}</td>
@@ -128,7 +160,7 @@ async function accepterDemande(idUserAsking, role) {
         params.append("role", role);
         params.append("id_userAsking", idUserAsking);
 
-        const response = await fetch(`${webServerAddress}/role/accept/${idUser}`, {
+        const response = await fetch(`${webServerAddress}/back/role/accept/${idUser}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -153,7 +185,31 @@ async function accepterDemande(idUserAsking, role) {
     }
 }
 
-
-
+async function deconnexionUser() {
+	try {
+		// Send a GET request to the server to retrieve all comments
+		const response = await fetch(`${webServerAddress}/back/logout`, {
+			method: "POST",
+		});
+		
+		if (response.ok) {
+			const result = await response.json();
+			console.log("déconnexion réussie", result);
+			window.location.href = result.redirect;
+			localStorage.removeItem("id_user");
+			localStorage.removeItem("role");
+            sessionStorage.removeItem("recetteTrad");
+			return result;
+		} else {
+			console.error(
+				"Echec de la déconnexion:",
+				response.status,
+				response.statusText
+			);
+		}
+	} catch (error) {
+		console.error("Error occurred:", error);
+	}
+}
 
 

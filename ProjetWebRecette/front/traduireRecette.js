@@ -4,10 +4,27 @@
 const webServerAddress = "http://localhost:8080";
 
 window.addEventListener("DOMContentLoaded", () => {
-	const recetteJSON = sessionStorage.getItem("recetteTrad");
-	if (recetteJSON) {
-		const recette = JSON.parse(recetteJSON);
-		afficherLesRecettes(recette);
+	const idUser = localStorage.getItem("id_user");
+	const role = localStorage.getItem("role");
+	const pageActuelle = window.location.pathname.split("/").pop();
+
+	// Si on est sur index.html et que l'utilisateur n'est pas connecté
+	if (pageActuelle === "traductionRecette.html" && (!idUser || !role)) {
+		alert("⚠️ Vous devez être connecté pour accéder à cette page.");
+		window.location.href = "connexion.html"; // ou autre page de ton choix
+	}else{
+		const recetteJSON = sessionStorage.getItem("recetteTrad");
+		if (recetteJSON) {
+			const recette = JSON.parse(recetteJSON);
+			afficherLesRecettes(recette);
+		}
+	}
+});
+
+window.addEventListener("beforeunload", async () => {
+	// si la page est rechargée cela créer une erreur  [Error] Error occurred: – TypeError: Load failed
+	if (localStorage.getItem("id_user")) {
+		await deconnexionUser();
 	}
 });
 
@@ -21,6 +38,13 @@ if(buttonSave)
 		await saveModif(idRecipe);
 	});
 
+}
+
+const buttonDeconnexion = document.getElementById("deconnexion");
+if (buttonDeconnexion) {
+	buttonDeconnexion.addEventListener("click", async () => {
+		await deconnexionUser();
+	});
 }
 
 async function afficherLesRecettes(recette) {
@@ -158,7 +182,7 @@ async function saveModif(idRecipe)
 	console.log(recetteDataJson);
 	console.log("await fetch(${webServerAddress}/recipe/modify/"+idRecipe);
 	try {
-        const response = await fetch(`${webServerAddress}/recipe/modify/`+idRecipe, {
+        const response = await fetch(`${webServerAddress}/back/recipe/modify/`+idRecipe, {
             method: "POST",
 			headers: { "Content-Type": "application/json" },
             body: JSON.stringify(recetteDataJson),
@@ -175,4 +199,30 @@ async function saveModif(idRecipe)
     }
 }
 
+async function deconnexionUser() {
+	try {
+		// Send a GET request to the server to retrieve all comments
+		const response = await fetch(`${webServerAddress}/back/logout`, {
+			method: "POST",
+		});
+		
+		if (response.ok) {
+			const result = await response.json();
+			console.log("déconnexion réussie", result);
+			window.location.href = result.redirect;
+			localStorage.removeItem("id_user");
+			localStorage.removeItem("role");
+			sessionStorage.removeItem("recetteTrad");
+			return result;
+		} else {
+			console.error(
+				"Echec de la déconnexion:",
+				response.status,
+				response.statusText
+			);
+		}
+	} catch (error) {
+		console.error("Error occurred:", error);
+	}
+}
 
