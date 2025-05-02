@@ -2,6 +2,8 @@
 
 const webServerAddress = "http://localhost:8080";
 
+const role = localStorage.getItem("role");
+
 document.addEventListener("DOMContentLoaded", async () => {
 	const idUser = localStorage.getItem("id_user");
 	const role = localStorage.getItem("role");
@@ -19,6 +21,14 @@ window.addEventListener("beforeunload", async () => {
 		await deconnexionUser();
 	}
 });
+
+const listeUtilisateur = document.getElementById("listUtil")
+if (role !== "administrateur")
+{
+	if (listeUtilisateur) {
+		listeUtilisateur.style.display = "none";
+	}
+}
 
 const btnChef = document.getElementById("btn-chef");
 if(btnChef)

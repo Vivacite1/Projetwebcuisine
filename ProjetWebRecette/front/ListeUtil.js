@@ -2,6 +2,8 @@
 
 const webServerAddress = "http://localhost:8080";
 
+const role = localStorage.getItem("role");
+
 document.addEventListener("DOMContentLoaded", async () => {
     const idUser = localStorage.getItem("id_user");
 	const role = localStorage.getItem("role");
@@ -23,6 +25,15 @@ window.addEventListener("beforeunload", async () => {
 		await deconnexionUser();
 	}
 });
+
+const listeUtilisateur = document.getElementById("listUtil")
+if (role !== "administrateur")
+{
+	if (listeUtilisateur) {
+		listeUtilisateur.style.display = "none";
+	}
+}
+
 
 const buttonDeconnexion = document.getElementById("deconnexion");
 if (buttonDeconnexion) {
@@ -90,7 +101,6 @@ async function afficherUser(users, demandes) {
     const thead = document.createElement("thead");
     thead.innerHTML = `
         <tr>
-            <th>ID Utilisateur</th>
             <th>Email</th>
             <th>Rôle Actuel</th>
             <th>Demande de Rôle</th>
@@ -106,7 +116,6 @@ async function afficherUser(users, demandes) {
         const row = document.createElement("tr");
 
         row.innerHTML = `
-            <td>${user.id_user}</td>
             <td>${user.mail}</td>
             <td>${user.role}</td>
             <td>${demande ? demande.role : "Aucune demande"}</td>

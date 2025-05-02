@@ -146,6 +146,7 @@ form {
     cursor: pointer;
     gap: 5px;
     font-weight: bold;
+    color: white;
 }
 
 .toggle-translate input {
@@ -650,6 +651,7 @@ body.modal-open #recette-list {
 .user-table th, .user-table td {
     padding: 12px;
     border-bottom: 1px solid #ddd;
+    color: white;
 }
 
 /* Boutons */

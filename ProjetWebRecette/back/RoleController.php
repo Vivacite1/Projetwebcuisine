@@ -102,15 +102,14 @@ class RoleController
     }
     
 
-    private function getDemandeByIdUser(string $idUser)
+    private function getDemandeByIdUser(string $idUser) : array
     {
         $demandes = $this->getAllDemande();
-        $demandeResearch = null; 
+        $demandeResearch = []; 
         
         foreach($demandes as $demande) {
             if($demande['id_user'] == $idUser) {
-                $demandeResearch = $demande;
-                break; 
+                $demandeResearch[] = $demande;
             }
         }
         
@@ -138,6 +137,7 @@ class RoleController
 
     private function acceptRole(array $demande, string $userIdAsking, string $role)
     {
+        
         $filePath = $this->authController->getFilePath();
         $contenu    = file_get_contents($filePath);
         $users      = json_decode($contenu, true);

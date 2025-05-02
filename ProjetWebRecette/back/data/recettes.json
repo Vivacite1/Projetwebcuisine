@@ -1,7 +1,7 @@
 [
     {
         "id_recette": "67dc295b26eb7",
-        "name": "Crock Pot Roast TEST",
+        "name": "Crock Pot Roast",
         "nameFR": "test",
         "author": "Unknown",
         "without": [
@@ -716,6 +716,29 @@
         ],
         "stepsFR": "",
         "imageURL": "http:\/\/localhost:8080\/back\/uploads\/68090fb7b0492_4777bc26067bc7eb94715f1b9624f647.png",
+        "originalURL": ""
+    },
+    {
+        "id_recette": "6814a35b35dde",
+        "name": "Lasagna",
+        "nameFR": "",
+        "author": "Alban",
+        "without": [
+            "Vegan✖"
+        ],
+        "ingredients": [
+            {
+                "quantity": "300 g",
+                "name": "Steak",
+                "type": "Soja"
+            }
+        ],
+        "ingredientsFR": "",
+        "steps": [
+            "Add a little butter to the pan✖"
+        ],
+        "stepsFR": "",
+        "imageURL": "http:\/\/localhost:8080\/back\/uploads\/6814a35b357d7_Lasagne.jpeg",
         "originalURL": ""
     }
 ]

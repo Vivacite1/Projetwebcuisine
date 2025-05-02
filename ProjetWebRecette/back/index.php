@@ -29,7 +29,7 @@ $router->register('GET', '/back/recipe/search/{search_param}', [$recetteControll
 $router->register('GET', '/back/recipe/detail/{id_recipe}', [$recetteController, 'handleGetRecipesCardDetail']);//fonctionne
 $router->register('POST', '/back/recipe/add/{id_user}', [$recetteController, 'handlePostRecetteRequest']);//fonctionne
 $router->register('POST', '/back/recipe/modify/{id_recipe}', [$recetteController, 'handlePostRecipeModifyRequest']);//fonctionne
-$router->register('DELETE', '/back/recipe/delete/{id_recipe}', [$recetteController, 'handlePostDeleteRecipeRequest']);//fonctionne
+$router->register('DELETE', '/back/recipe/delete/{id_recipe}', [$recetteController, 'handleDeleteRecipeRequest']);//fonctionne
 $router->register('GET', '/back/translate/recipe/{id_recipe}', [$recetteController, 'handleGetTranslateRecipe']);
 
 $router->register('POST', '/back/like/recipe/{id_recipe}/{id_user}', [$recetteController, 'handlePostLikeRecipe']);//fonctionne
@@ -41,11 +41,5 @@ $router->register('GET', '/back/demande', [$authController, 'handleGetDemande'])
 $router->register('POST', '/back/comment/recipe/{id_recipe}', [$commentController, 'handlePostRecipeCommentRequest']);//fonctionne
 $router->register('DELETE', '/back/comment/delete/{id_comment}', [$commentController, 'handleDeleteCommentRequest']);//fonctionne
 $router->register('GET', '/back/comment/{id_recipe}', [$commentController, 'handleGetCommentsById']);//fonctionne
-
-// $router->register('POST', '/comment/liste', [$recetteController, 'handlePostDisplayComment']);
-
-// $router->register('POST', '/comment', [$commentController, 'handlePostCommentRequest']);
-// $router->register('GET', '/commentAffiche', [$commentController, 'handleGetCommentsRequest']);
-// $router->register('DELETE', '/commentSupprimer', [$commentController, 'handleDeleteCommentRequest']);
 
 $router->handleRequest();

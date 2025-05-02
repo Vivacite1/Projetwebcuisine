@@ -85,8 +85,8 @@ class AuthController
 		}
 
 		// Récupérer les données
-		$email = $_POST['email'] ?? null;
-		$password = $_POST['password'] ?? null;
+		$email = $_POST['email'];
+		$password = $_POST['password'];
 
 		// Vérifier si les champs sont vides
 		if (!$email || !$password) {
