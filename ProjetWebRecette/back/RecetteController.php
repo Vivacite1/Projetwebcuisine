@@ -34,41 +34,6 @@ class RecetteController
 		return json_decode($content, true) ?? [];
 	}
 
-    public function getRecetteByTitle($searchTerm): array
-    {
-        // Vérifie si le fichier existe
-        if (!file_exists($this->filePath)) {
-            return [];
-        }
-        // Charge le contenu du fichier
-        $content = file_get_contents($this->filePath);
-
-        // Décoder le JSON
-        $recettes = json_decode($content, true); // assuming the file is in JSON format
-
-        // Si aucune recette n'est trouvée
-        if ($recettes === null) {
-            return [];
-        }
-
-        // Filtre les recettes qui commencent par le terme de recherche
-        $filteredRecettes = array_filter($recettes, function ($recette) use ($searchTerm) {
-            if (stripos($recette['name'], $searchTerm) === 0)
-            {
-                return true;
-            }
-            if (isset($recette['nameFR']) && stripos($recette['name'], $searchTerm) === 0)
-            {
-                return true;
-            }
-
-            return stripos($recette['name'], $searchTerm) === 0; 
-        });
-
-        // Renvoie les recettes filtrées
-        return array_values($filteredRecettes); // array_values pour réindexer les clés
-    }
-
     public function handleGetRecipesCardDetail(array $params)
     {
         header('Content-Type: application/json; charset=utf-8');
@@ -319,28 +284,38 @@ class RecetteController
     {
         $recettes = $this->getAllRecette();
         $recipeResearch = [];
-        foreach($recettes as $recette)
-        {
-            if(isset($recette['name']) && str_starts_with(strtolower($recette['name']),strtolower($searchTerm)))
-            {
-                $recipeResearch[] = $recette;
+    
+        foreach ($recettes as $recette) {
+            $matched = false;
+    
+            // Vérifie name
+            if (isset($recette['name']) && str_starts_with(strtolower($recette['name']), strtolower($searchTerm))) {
+                $matched = true;
             }
-
-            if(isset($recette['nameFR']) && str_starts_with(strtolower($recette['nameFR']),strtolower($searchTerm)))
-            {
-                $recipeResearch[] = $recette;
-            }    
-
-            foreach($recette['ingredients'] as $ingredient)
-            {
-                if(isset($ingredient['name']) && str_starts_with(strtolower($ingredient['name']),strtolower($searchTerm)))
-                {
-                    $recipeResearch[] = $recette;
+    
+            // Vérifie nameFR si name n’a pas déjà matché
+            elseif (isset($recette['nameFR']) && str_starts_with(strtolower($recette['nameFR']), strtolower($searchTerm))) {
+                $matched = true;
+            }
+    
+            // Vérifie les ingrédients si aucun match encore
+            elseif (isset($recette['ingredients']) && is_array($recette['ingredients'])) {
+                foreach ($recette['ingredients'] as $ingredient) {
+                    if (isset($ingredient['name']) && str_starts_with(strtolower($ingredient['name']), strtolower($searchTerm))) {
+                        $matched = true;
+                        break;
+                    }
                 }
             }
+    
+            if ($matched) {
+                // Utilise une clé unique pour éviter les doublons
+                $key = $recette['id'] ?? md5(json_encode($recette)); // fallback si pas d'ID
+                $recipeResearch[$key] = $recette;
+            }
         }
-
-        return $recipeResearch;
+    
+        return array_values($recipeResearch);
     }
 
     public function saveRecette($recette)

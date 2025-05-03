@@ -3,6 +3,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+session_start();
+
 require_once 'Router.php';
 require_once 'AuthController.php';
 require_once 'CommentController.php';
@@ -10,11 +12,11 @@ require_once 'RecetteController.php';
 require_once 'RoleController.php';
 
 
-$router = new Router();
-$authController = new AuthController(__DIR__ . '/data/users.json',__DIR__ . '/data/demande.json');
-$commentController = new CommentController(__DIR__ . '/data/comments.json', $authController);
-$recetteController = new RecetteController(__DIR__ . '/data/recettes.json', __DIR__ . '/data/likeRecipe.json', $authController);
-$roleController = new RoleController(__DIR__ . '/data/demande.json', $authController);
+$router             = new Router();
+$authController     = new AuthController(__DIR__ . '/data/users.json',__DIR__ . '/data/demande.json');
+$commentController  = new CommentController(__DIR__ . '/data/comments.json', $authController);
+$recetteController  = new RecetteController(__DIR__ . '/data/recettes.json', __DIR__ . '/data/likeRecipe.json', $authController);
+$roleController     = new RoleController(__DIR__ . '/data/demande.json', $authController);
 
 $router->register('POST', '/back/register', [$authController, 'handleRegister']); //fonctionne
 $router->register('POST', '/back/login', [$authController, 'handleLogin']); //fonctionne
@@ -37,6 +39,7 @@ $router->register('GET', '/back/like', [$recetteController, 'handleGetLike']);//
 
 $router->register('GET', '/back/user', [$authController, 'handleGetUser']);//fonctionne
 $router->register('GET', '/back/demande', [$authController, 'handleGetDemande']);//fonctionne
+$router->register('GET', '/back/user/{id_user}', [$authController, 'handleGetUserById']);//fonctionne
 
 $router->register('POST', '/back/comment/recipe/{id_recipe}', [$commentController, 'handlePostRecipeCommentRequest']);//fonctionne
 $router->register('DELETE', '/back/comment/delete/{id_comment}', [$commentController, 'handleDeleteCommentRequest']);//fonctionne

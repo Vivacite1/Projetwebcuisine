@@ -142,7 +142,7 @@ async function saveModif(idRecipe)
 	const nameFR = document.getElementById("input-nameFR");
 	if (nameFR)
 	{
-		recetteDataJson.nameFR = nameFR;
+		recetteDataJson.nameFR = nameFR.value;
 	}
 
 	if (!recetteDataJson.ingredientsFR) {
