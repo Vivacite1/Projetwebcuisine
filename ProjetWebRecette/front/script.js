@@ -148,11 +148,11 @@ if(detailRecette)
 	});
 }
 
-async function sendComment()
+async function sendComment(idRecipe) 
 {
 	const comment = document.getElementById("comment").value.trim();
 	const userID = localStorage.getItem("id_user");
-	const recipeID = document.getElementById("idRecipe").textContent.trim();
+	const recipeID = idRecipe;
 
 	if (comment === "") {
 		alert("Le commentaire ne peut pas être vide !");
@@ -215,9 +215,7 @@ async function inscription(event) {
 async function connexion(event) {
 	const body = new URLSearchParams(new FormData(event.target));
 
-	console.log("body:", body.toString()); // Debug
 	try {
-		console.log("Envoi de la requête à:", `${webServerAddress}/login`);
 		const response = await fetch(`${webServerAddress}/back/login`, {
 			method: "POST",
 			headers: {
@@ -226,17 +224,18 @@ async function connexion(event) {
 			body,
 		});
 
-		console.log("Statut de la réponse HTTP:", response.status);
 		const text = await response.text(); // Lire la réponse en texte brut
-		console.log("Réponse brute du serveur:", text); // Debug
 
 		if (response.ok) {
 			const result = JSON.parse(text);
 			localStorage.setItem("id_user", result.id_user);
 			localStorage.setItem("role",result.role);
+			alert(result.message)
 			window.location.href = result.redirect;
 			return result;
 		} else {
+			const result = JSON.parse(text);
+			alert(result.message);
 			console.error("Échec de la connexion:", response.status, response.statusText);
 		}
 	} catch (error) {
@@ -383,7 +382,7 @@ async function afficherRecette(allRecettes, likes, translate) {
             titre.appendChild(star);
         }
 
-		let auteurContent = recette.nameAuthor;
+		let auteurContent = recette.author;
 		if (auteurContent === undefined && translate) {
 			auteurContent = "Auteur inconnu";
 		} else if (auteurContent === undefined && !translate) {
@@ -604,7 +603,7 @@ async function afficherDetailRecette(recette,likes,translate) {
 	const role = localStorage.getItem("role");
 	const idUser = localStorage.getItem("id_user");
 
-	if (role === "administrateur" || idUser === recette.id_user) {
+	if ((role === "administrateur" || idUser === recette.id_user) && !recette.validated) {
 		document.getElementById("modifierRecette").style.display = "block";
 	} else {
 		document.getElementById("modifierRecette").style.display = "none";
@@ -630,7 +629,7 @@ async function afficherDetailRecette(recette,likes,translate) {
 		};
 	}
 
-	let auteur = recetteData.nameAuthor;
+	let auteur = recetteData.author;
 	if (auteur === undefined && translate) {
 		auteur = "Auteur inconnu";
 	} else if (auteur === undefined && !translate) {
@@ -863,7 +862,8 @@ async function afficherDetailRecette(recette,likes,translate) {
 
 			const boutonEnvoyer = document.getElementById("envoyerCommentaire");
 			boutonEnvoyer.addEventListener("click", async function () {
-				await sendComment();
+				const idRecipe = recetteData.id_recette;
+				await sendComment(idRecipe);
 				fermerModale();
 			});
 		});
@@ -888,19 +888,25 @@ async function afficherDetailRecette(recette,likes,translate) {
 			{
 				const li = document.createElement("li");
 				// ajouter une poubelle
-				const deleteButton = document.createElement("button");
-				deleteButton.classList.add("delete-buttonCom");
-				deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
-				<path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
-			  </svg>`;
-				deleteButton.addEventListener("click", async () => {
-					const confirmation = confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?");
-					if (!confirmation) return;
-					await deleteComment(comments[i].id_comment);
-					li.remove();
-				});
 				li.textContent = `${comments[i].id_user} : ${comments[i].comment}`;
-				li.appendChild(deleteButton);	
+				if(role === "administrateur")
+				{
+					const deleteButton = document.createElement("button");
+					deleteButton.classList.add("delete-buttonCom");
+					deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
+					<path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5"/>
+					</svg>`;
+					deleteButton.addEventListener("click", async () => {
+						const confirmation = confirm("Êtes-vous sûr de vouloir supprimer ce commentaire ?");
+						if (!confirmation) return;
+						await deleteComment(comments[i].id_comment);
+						li.remove();
+					});
+
+					li.appendChild(deleteButton);	
+				}
+				
+				
 				ul.appendChild(li);
 			}
 			commentListeDiv.appendChild(ul);
@@ -1237,38 +1243,6 @@ async function ajouterIngredient(event) {
 
 
 async function sendRecette() {
-    // Récupération des valeurs
-    // const nameRecipe 	= document.getElementById("name").value.trim();
-    // const author 		= document.getElementById("author").value.trim();
-    
-    // const restrictions 	= Array.from(document.querySelectorAll("#listeRestriction li")).map(li => li.textContent);
-	// const ingredients 	= Array.from(document.querySelectorAll("#listIngredient li")).map(li => {
-	// 	// Assurer que tu as bien accès aux attributs 'data-name' et 'data-type'
-	// 	const quantity 	= li.getAttribute("data-quantity"); // Utiliser getAttribute pour obtenir l'attribut 'data-quantity'
-	// 	const type 		= li.getAttribute("data-type");        // Utiliser getAttribute pour obtenir l'attribut 'data-type'
-	// 	const name 		= li.getAttribute("data-name");        // Utiliser getAttribute pour obtenir l'attribut 'data-name'
-		
-	// 	return {
-	// 		quantity: quantity,
-	// 		name: name,
-	// 		type: type
-	// 	};
-	// });	
-	
-    // const steps 	= Array.from(document.querySelectorAll("#listEtape li")).map(li => li.textContent);
-    // const imageFile = document.getElementById("imageUpload").files[0];
-	// console.log(imageFile);
-
-
-    // Construction de l'objet JSON
-    // const recetteData = {
-    //     name: nameRecipe,
-    //     author: author,
-    //     without: restrictions,
-    //     ingredients: ingredients,
-    //     steps: steps,
-	// 	imageURL: imageUrl
-    // };
 
 	const nameRecipe  = document.getElementById("name").value.trim();
     const author      = document.getElementById("author").value.trim();
@@ -1338,6 +1312,7 @@ async function deconnexionUser() {
 		console.error("Error occurred:", error);
 	}
 }
+
 
 async function traduireRecette(idRecipe)
 {

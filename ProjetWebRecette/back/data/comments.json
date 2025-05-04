@@ -2,31 +2,36 @@
     {
         "id_recipe": "45722fae-67b0-44c0-a0cf-51a2462ed51d",
         "id_user": "67f3be78a198a",
-        "comment": "tttt"
+        "comment": "Je recommande"
     },
     {
         "id_recipe": "67dc295b26eb7",
         "id_user": "67f3be78a198a",
-        "comment": "yuyzeffuouezf"
+        "comment": "Pas mal !"
     },
     {
         "id_recipe": "67dc295b26eb7",
         "id_user": "67f3be78a198a",
-        "comment": "neogzoeznbougnz"
+        "comment": "La cuisson est trop longue"
     },
     {
         "id_recipe": "67dc295b26eb7",
         "id_user": "680789d53b4ff",
-        "comment": "outez"
+        "comment": "Meilleur recette du monde"
     },
     {
         "id_recipe": "67dc295b26eb7",
         "id_user": "6807c767097c5",
-        "comment": "c'est nu"
+        "comment": "Très bonne recette je recommande"
     },
     {
         "id_recipe": "67dc295b26eb7",
         "id_user": "6807e8a7b870f",
         "comment": "c'est trop bon"
+    },
+    {
+        "id_recipe": "6814a35b35dde",
+        "id_user": "67dbf72c672b5",
+        "comment": "Les lasagnes sont délicieuses"
     }
 ]

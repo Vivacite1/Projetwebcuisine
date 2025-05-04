@@ -81,7 +81,8 @@
             "tt",
             "t",
             "t"
-        ]
+        ],
+        "validated": true
     },
     {
         "id_recette": "5152437714",
@@ -721,7 +722,7 @@
     {
         "id_recette": "6814a35b35dde",
         "name": "Lasagna",
-        "nameFR": "",
+        "nameFR": "Lasagne",
         "author": "Alban",
         "without": [
             "Vegan✖"
@@ -733,11 +734,19 @@
                 "type": "Soja"
             }
         ],
-        "ingredientsFR": "",
+        "ingredientsFR": [
+            {
+                "quantity": "300 g",
+                "name": "steak de soja",
+                "type": "viande"
+            }
+        ],
         "steps": [
             "Add a little butter to the pan✖"
         ],
-        "stepsFR": "",
+        "stepsFR": [
+            "Ajouter un petit bout de beurre dans la poêle"
+        ],
         "imageURL": "http:\/\/localhost:8080\/back\/uploads\/6814a35b357d7_Lasagne.jpeg",
         "originalURL": ""
     }

@@ -2,7 +2,6 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-session_start();
 
 class AuthController
 {
@@ -106,7 +105,7 @@ class AuthController
 				$userId = $user['id_user'];
 				if (!password_verify($password, $user['password'])) {
 					http_response_code(400);
-					echo json_encode(['message' => 'Mot de passe incorrect']);
+					echo json_encode(['message' => 'Email ou Mot de passe incorrect']);
 					return;
 				}
 			}
@@ -117,7 +116,6 @@ class AuthController
 			echo json_encode(['message' => 'Utilisateur non trouvé']);
 			return;
 		}
-
 
 		$_SESSION['id'] = $userId;
 		$_SESSION['role'] = $userRole;
@@ -166,6 +164,13 @@ class AuthController
 		return $_SESSION['user'] ?? null;
 	}
 
+	public function handleGetUserById(array $param): void
+	{
+		http_response_code(200);
+		header('Content-Type: application/json; charset=utf-8');
+		$user = $this->getUserById($param['id_user']);
+		echo json_encode($user, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+	}
 
 	public function handleGetUser() : void
 	{
