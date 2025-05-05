@@ -88,7 +88,7 @@
         "id_recette": "5152437714",
         "name": "Roasted Asparagus",
         "nameFR": "Asperges roties",
-        "author": "Unknown",
+        "author": "Alban",
         "without": [
             "NoGluten",
             "NoMilk",
@@ -96,18 +96,18 @@
         ],
         "ingredients": [
             {
-                "quantity": "1 lb",
                 "name": " asparagus",
+                "quantity": "1 lb",
                 "type": "Produce"
             },
             {
-                "quantity": "1 1\/2 tbsp",
                 "name": "olive oil",
+                "quantity": "1 1\/2 tbsp",
                 "type": "Condiments"
             },
             {
-                "quantity": "1\/2 tsp",
                 "name": "kosher salt",
+                "quantity": "1\/2 tsp",
                 "type": "Baking"
             }
         ],
@@ -420,7 +420,85 @@
             0
         ],
         "imageURL": "http:\/\/s3.amazonaws.com\/gmi-digital-library\/65caecf7-a8f7-4a09-8513-2659cf92871e.jpg",
-        "originalURL": "#"
+        "originalURL": "#",
+        "nameFR": "cookies",
+        "ingredientsFR": [
+            {
+                "quantity": "1 cup",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "3\/4 cup",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1 1\/2 cups",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "2 1\/2 cups",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1 tsp.",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1 tsp.",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1 tsp.",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1\/2 tsp.",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1\/2 tsp.",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "2 cups",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1\/2 cup",
+                "name": "",
+                "type": ""
+            }
+        ],
+        "stepsFR": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]
     },
     {
         "id_recette": "7523a5fb-c81c-4f80-93ed-2df4b37d9f49",

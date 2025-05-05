@@ -24,6 +24,8 @@ $router->register('POST', '/back/logout', [$authController, 'handleLogout']);
 
 $router->register('POST', '/back/role/ask', [$roleController, 'handlePostRole']);//fonctionne
 $router->register('POST', '/back/role/accept/{id_user}', [$roleController, 'handlePostAcceptRole']);//fonctionne
+$router->register('POST', '/back/role/refuse/{id_user}', [$roleController, 'handlePostRefuseRole']);//fonctionne
+//$router->register('POST', '/back/role/modify/{id_user}', [$roleController, 'handlePostModifyRole']);//fonctionne
 
 $router->register('GET', '/back/recipe', [$recetteController, 'handleGetRecipesRequest']);//fonctionne
 $router->register('POST', '/back/recipe/validate', [$recetteController, 'validateRecipe']);

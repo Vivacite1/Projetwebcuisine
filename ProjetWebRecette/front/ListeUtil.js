@@ -89,89 +89,136 @@ async function getDemandes() {
 
 async function afficherUser(users, demandes) {
     const userListeDiv = document.getElementById("listeUtilisateur");
-
     // On vide le contenu précédent
-    userListeDiv.innerHTML = ""; 
-
+    userListeDiv.innerHTML = "";
+    
     // Création du tableau
     const table = document.createElement("table");
     table.classList.add("user-table");
-
+    
     // Création de l'en-tête du tableau
     const thead = document.createElement("thead");
     thead.innerHTML = `
-        <tr>
-            <th>Email</th>
-            <th>Rôle Actuel</th>
-            <th>Demande de Rôle</th>
-            <th>Actions</th>
-        </tr>
+      <tr>
+        <th>Email</th>
+        <th>Rôle Actuel</th>
+        <th>Demande de Rôle</th>
+        <th>Actions</th>
+      </tr>
     `;
-
+    
     const tbody = document.createElement("tbody");
-
+    
     // Remplissage du tableau avec les utilisateurs
-    users.forEach(user => {    
-        const demande = demandes.find(d => d.id_user === user.id_user);
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-            <td>${user.mail}</td>
-            <td>${user.role}</td>
-            <td>${demande ? demande.role : "Aucune demande"}</td>
-            <td>
-                ${demande ? `
-                    <button class="acceptButton" user="${user.id_user}"  role="${demande.role}">✔ Accepter</button>
-                    <button class="rejectButton" user="${user.id_user}"  role="${demande.role}">✖ Rejeter</button>
-                ` : "—"}
-            </td>
-        `;
-
-        tbody.appendChild(row);
+    users.forEach(user => {
+      const demande = demandes.find(d => d.id_user === user.id_user);
+      const row = document.createElement("tr");
+      
+      row.innerHTML = `
+        <td>${user.mail}</td>
+        <td>${user.role}</td>
+        <td>${demande ? demande.role : "Aucune demande"}</td>
+        <td>
+          ${demande ? `
+            <button class="acceptButton" user="${user.id_user}" role="${demande.role}" demande="${demande.id_demande}">✔ Accepter</button>
+            <button class="rejectButton" user="${user.id_user}" role="${demande.role}" demande="${demande.id_demande}">✖ Rejeter</button>
+          ` : "—"}
+        </td>
+      `;
+      
+      tbody.appendChild(row);
     });
-
+    
     // Ajout des parties du tableau
     table.appendChild(thead);
     table.appendChild(tbody);
     userListeDiv.appendChild(table);
-
+    
+    // Ajout des gestionnaires d'événements pour les boutons
     document.querySelectorAll(".acceptButton").forEach(button => {
-        button.addEventListener("click", async (event) => {
-            const idUserAsking = event.target.getAttribute("user");
-            const role = event.target.getAttribute("role");
-            await accepterDemande(idUserAsking, role);
-        });
+      button.addEventListener("click", async (event) => {
+        const idUserAsking = event.target.getAttribute("user");
+        const role = event.target.getAttribute("role");
+        const idDemande = event.target.getAttribute("demande");
+        
+        if (!idDemande) {
+          console.error("ID de demande manquant");
+          return;
+        }
+        
+        await accepterDemande(idUserAsking, role, idDemande);
+      });
     });
-
+    
     document.querySelectorAll(".rejectButton").forEach(button => {
-        button.addEventListener("click", async (event) => {
-            const idUserAsking = event.target.getAttribute("user");
-            const role = event.target.getAttribute("role");
-            await rejeterDemande(idUserAsking, role);
-        });
+      button.addEventListener("click", async (event) => {
+        const idUserAsking = event.target.getAttribute("user");
+        const role = event.target.getAttribute("role");
+        const idDemande = event.target.getAttribute("demande");
+        
+        if (!idDemande) {
+          console.error("ID de demande manquant");
+          return;
+        }
+        
+        await rejeterDemande(idUserAsking, role, idDemande);
+      });
     });
-}
+  }
 
-async function accepterDemande(idUserAsking, role) {
+async function accepterDemande(idUserAsking, role, idDemande) {
+    try {
+       const idUser = localStorage.getItem("id_user");
+       
+       const params = new URLSearchParams();
+       params.append("role", role);
+       params.append("id_userAsking", idUserAsking);
+       params.append("id_demande", idDemande);
+              
+       const response = await fetch(`${webServerAddress}/back/role/accept/${idUser}`, {
+           method: "POST",
+           headers: {
+               "Content-Type": "application/x-www-form-urlencoded",
+           },
+           body: params,
+       });
+       
+       if (response.ok) {
+           const result = await response.json();
+           const users = await getUsers();
+           const demandes = await getDemandes();
+           await afficherUser(users, demandes);
+           return result;
+       } else {
+           const errorText = await response.text();
+           console.error("Échec de l'acceptation de la demande:", response.status, response.statusText, errorText);
+       }
+    } catch (error) {
+       console.error("Une erreur est survenue :", error);
+    }
+   }
+
+async function rejeterDemande(idUserAsking, role, idDemande) {
     try {
         const idUser = localStorage.getItem("id_user");
 
         const params = new URLSearchParams();
         params.append("role", role);
         params.append("id_userAsking", idUserAsking);
+        params.append("id_demande", idDemande);
 
-        const response = await fetch(`${webServerAddress}/back/role/accept/${idUser}`, {
+        const response = await fetch(`${webServerAddress}/back/role/refuse/${idUser}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
             },
             body: params,
         });
-        console.log("Demande acceptée");
+        console.log("Demande rejetée");
 
         if (response.ok) {
             const result = await response.json();
-            console.log("Demande acceptée avec succès :", result);
+            console.log("Demande rejetée avec succès :", result);
             const users      = await getUsers();
             const demandes   = await getDemandes();
             await afficherUser(users, demandes);
@@ -184,6 +231,7 @@ async function accepterDemande(idUserAsking, role) {
         console.error("Une erreur est survenue :", error);
     }
 }
+
 
 async function deconnexionUser() {
 	try {

@@ -1,56 +1,32 @@
 [
     {
-        "id_user": "67d1def77461c",
-        "mail": "albancousin122@gmail.com",
-        "password": "$2y$12$ThvrKGx1cXXvUYrbHHGka.fvCDKVXY7u2WhtfxWUJ\/7kdeY1JySxO",
-        "role": "cuisinier"
-    },
-    {
         "id_user": "67dbf72c672b5",
         "mail": "albancousin12@gmail.com",
         "password": "$2y$12$yJsnEOrxM3.b6PGNRGkfXOVnvYZGSAg0pz2eD51IOzA8jhAz.Wvju",
         "role": "administrateur"
     },
     {
-        "id_user": "67ec26b5f02bc",
-        "mail": "lkanfeuae@gmail.com",
-        "password": "$2y$12$f4LSaPdeYaTDxXtMPXitTOYaYIKklwNL02N4yyqmqxpE7Wf91\/ALa",
-        "role": "cuisinier"
-    },
-    {
-        "id_user": "67ec2b7d5bd48",
-        "mail": "albancojzeohiuz@gmail.com",
-        "password": "$2y$12$6W5ml\/scqoGDnTqdKOVAF.QliH8d.\/34yqH8f0vZGjMB3XQK.ho1O",
-        "role": "cuisinier"
-    },
-    {
-        "id_user": "67ed6979275dc",
-        "mail": "albancousin@gmail.com",
-        "password": "$2y$12$PbpKQD30giQM.qfU7gzkJ.U0k\/racOEMTV.VmI8ptkZ6vihJYbjya",
-        "role": "traducteur"
-    },
-    {
-        "id_user": "67f3be78a198a",
-        "mail": "fiacremitokpe@gmail.com",
-        "password": "$2y$12$Z\/cfgnnjeYnRIDWHNugtsuxZns1kNaYYEJ1g0xbVVN5HYL90yBrau",
-        "role": "administrateur"
-    },
-    {
         "id_user": "680789d53b4ff",
         "mail": "alban@gmail.com",
         "password": "$2y$12$saEgaD1WxW8Dz5I6A2TxiObnkE3PiNDIZaORjbX7PGMOaNdQX.meG",
-        "role": "cuisinier"
+        "role": "traducteur"
     },
     {
-        "id_user": "6807c767097c5",
-        "mail": "emmacousin2@gmail.com",
-        "password": "$2y$12$f0yyeloc\/B6HDgRXunlMh.SNC.qXx.\/upx6rdXtcW7prM\/Z0hJwr2",
-        "role": "cuisinier"
-    },
-    {
-        "id_user": "6807e8a7b870f",
-        "mail": "severine@gmail.com",
-        "password": "$2y$12$99Ox\/1DZAEGOV19y0.kHCOpRioiA5z\/Iy2QmBIsbxLHo8DBhG6qTC",
+        "id_user": "6818f6b6d577e",
+        "mail": "Jean@Dupont.com",
+        "password": "$2y$12$5RfEpl3xysgW8LoRbEkNgONtGogvHtQ.HUAFA9aK4KE0kDIDm2sS.",
         "role": "chef"
+    },
+    {
+        "id_user": "681904ba6e2a1",
+        "mail": "Jean@neymar.com",
+        "password": "$2y$12$uC\/m7b8yCieL4MqfX3\/nvuMyQ2r0WZqM1B\/fq.U56gXFDjl3y8Fo6",
+        "role": "traducteur"
+    },
+    {
+        "id_user": "681905040ca0a",
+        "mail": "Jean@peutplus.com",
+        "password": "$2y$12$2bojLGJOsxKvpCr9MG0NoeqmEN89upSjnHNcuu\/jU9Bbqd4pqUlaS",
+        "role": "cuisinier"
     }
 ]
