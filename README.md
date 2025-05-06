@@ -1,12 +1,32 @@
-##Lancer le serveur pour accéder au site
-Récupérer le code à l'aide de git clone : [lien du dossier github]
-Ouvrir le projet dans un logiciel (Visual studio code)
-Ouvrir un terminal
-Faire la commande suivante : cd ProjetWebRecette
-Faire la commande suivante : php -S localhost:8080
+# Guide d'installation et d'utilisation
 
-##Accéder au site
-Aller sur un naviguateur
-Mettre cette ligne dans l'url : "localhost:8080/front/connexion.html"
+## Installation et lancement du serveur
 
-Naviguer sur notre site
+1. **Récupérer le code source**
+   ```
+   git clone [lien du dépôt GitHub]
+   ```
+
+2. **Ouvrir le projet**
+   - Lancez Visual Studio Code
+   - Ouvrez le dossier du projet
+
+3. **Lancer le serveur**
+   - Ouvrez un terminal dans VS Code
+   ```bash
+   cd ProjetWebRecette
+   php -S localhost:8080
+   ```
+
+## Accès au site
+
+1. **Ouvrir un navigateur**
+
+2. **Accéder à l'URL suivante :**
+   ```
+   localhost:8080/front/connexion.html
+   ```
+
+3. **Vous pouvez maintenant naviguer sur notre site !**
+
+*Projet développé par Cousin Alban - Mitokpe Fiacre *
