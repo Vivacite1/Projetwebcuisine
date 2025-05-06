@@ -88,7 +88,7 @@
         "id_recette": "5152437714",
         "name": "Roasted Asparagus",
         "nameFR": "Asperges roties",
-        "author": "Unknown",
+        "author": "Alban",
         "without": [
             "NoGluten",
             "NoMilk",
@@ -96,18 +96,18 @@
         ],
         "ingredients": [
             {
-                "quantity": "1 lb",
                 "name": " asparagus",
+                "quantity": "1 lb",
                 "type": "Produce"
             },
             {
-                "quantity": "1 1\/2 tbsp",
                 "name": "olive oil",
+                "quantity": "1 1\/2 tbsp",
                 "type": "Condiments"
             },
             {
-                "quantity": "1\/2 tsp",
                 "name": "kosher salt",
+                "quantity": "1\/2 tsp",
                 "type": "Baking"
             }
         ],
@@ -137,59 +137,6 @@
         ],
         "imageURL": "http:\/\/img.sndimg.com\/food\/image\/upload\/w_266\/v1\/img\/recipes\/50\/84\/7\/picMcSyVd.jpg",
         "originalURL": "http:\/\/www.food.com\/recipe\/roasted-asparagus-50847"
-    },
-    {
-        "id_recette": "5ff812c8-1830-4d8e-a1aa-1e106c85ab50",
-        "name": "Curried Lentils and Rice",
-        "nameFR": "Lentilles et Riz au curry",
-        "author": "Unknown",
-        "without": [
-            "NoGluten",
-            "NoMilk",
-            "Vegan"
-        ],
-        "ingredients": [
-            {
-                "quantity": "1 quart",
-                "name": "beef broth",
-                "type": "Misc"
-            },
-            {
-                "quantity": "1 cup",
-                "name": "dried green lentils",
-                "type": "Misc"
-            },
-            {
-                "quantity": "1\/2 cup",
-                "name": "basmati rice",
-                "type": "Misc"
-            },
-            {
-                "quantity": "1 tsp",
-                "name": "curry powder",
-                "type": "Condiments"
-            },
-            {
-                "quantity": "1 tsp",
-                "name": "salt",
-                "type": "Condiments"
-            }
-        ],
-        "steps": [
-            "Bring broth to a low boil.",
-            "Add curry powder and salt.",
-            "Cook lentils for 20 minutes.",
-            "Add rice and simmer for 20 minutes.",
-            "Enjoy!"
-        ],
-        "timers": [
-            0,
-            0,
-            20,
-            20,
-            0
-        ],
-        "imageURL": "http:\/\/dagzhsfg97k4.cloudfront.net\/wp-content\/uploads\/2012\/05\/lentils3.jpg"
     },
     {
         "id_recette": "8e67fc4b-86f2-455e-af28-4c02bbd71619",
@@ -473,7 +420,85 @@
             0
         ],
         "imageURL": "http:\/\/s3.amazonaws.com\/gmi-digital-library\/65caecf7-a8f7-4a09-8513-2659cf92871e.jpg",
-        "originalURL": "#"
+        "originalURL": "#",
+        "nameFR": "cookies",
+        "ingredientsFR": [
+            {
+                "quantity": "1 cup",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "3\/4 cup",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1 1\/2 cups",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "2 1\/2 cups",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1 tsp.",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1 tsp.",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1 tsp.",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1\/2 tsp.",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1\/2 tsp.",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "2 cups",
+                "name": "",
+                "type": ""
+            },
+            {
+                "quantity": "1\/2 cup",
+                "name": "",
+                "type": ""
+            }
+        ],
+        "stepsFR": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]
     },
     {
         "id_recette": "7523a5fb-c81c-4f80-93ed-2df4b37d9f49",
@@ -550,7 +575,7 @@
             0,
             0
         ],
-        "imageURL": "http:\/\/www.canadianliving.com\/img\/photos\/biz\/blueberry-oatmeal-squares5801359401371.jpg",
+        "imageURL": "http:\/\/localhost:8080\/back\/uploads\/blueberry.jpg",
         "originalURL": "http:\/\/www.canadianliving.com\/food\/blueberry_oatmeal_squares.php"
     },
     {
@@ -671,52 +696,6 @@
         ],
         "stepsFR": "",
         "imageURL": "http:\/\/img.sndimg.com\/food\/image\/upload\/w_266\/v1\/img\/recipes\/27\/20\/8\/picVfzLZo.jpg",
-        "originalURL": ""
-    },
-    {
-        "id_recette": "68090ed25fef6",
-        "name": "bizr",
-        "nameFR": "",
-        "author": "inuzib",
-        "without": [
-            "biur✖"
-        ],
-        "ingredients": [
-            {
-                "quantity": "bi",
-                "name": "iubgrziub",
-                "type": "iubriub"
-            }
-        ],
-        "ingredientsFR": "",
-        "steps": [
-            "izizr✖"
-        ],
-        "stepsFR": "",
-        "imageURL": "back\/uploads\/68090ed25f700_2cm37Vx.jpg",
-        "originalURL": ""
-    },
-    {
-        "id_recette": "68090fb7b06df",
-        "name": "vez",
-        "nameFR": "",
-        "author": "vez",
-        "without": [
-            "vez✖"
-        ],
-        "ingredients": [
-            {
-                "quantity": "vez",
-                "name": "evz",
-                "type": "zev"
-            }
-        ],
-        "ingredientsFR": "",
-        "steps": [
-            "zve✖"
-        ],
-        "stepsFR": "",
-        "imageURL": "http:\/\/localhost:8080\/back\/uploads\/68090fb7b0492_4777bc26067bc7eb94715f1b9624f647.png",
         "originalURL": ""
     },
     {

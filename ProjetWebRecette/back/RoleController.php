@@ -57,49 +57,61 @@ class RoleController
         }
     }
 
-    public function handlePostAcceptRole(array $params): void 
-    {
-        header('Content-Type: application/json');
+    public function handlePostAcceptRole(array $params): void
+{
+    header('Content-Type: application/json');
+    
+    // Récupérer les données POST
+    $input = file_get_contents('php://input');
+    parse_str($input, $postData);
+    
+    
+    // Vérifier que les données nécessaires sont présentes
+    if (!isset($postData['role']) || !isset($postData['id_userAsking']) || !isset($postData['id_demande'])) {
+        error_log("Paramètres manquants dans acceptRole: role=" . 
+                  (isset($postData['role']) ? $postData['role'] : 'manquant') . 
+                  ", id_userAsking=" . (isset($postData['id_userAsking']) ? $postData['id_userAsking'] : 'manquant') . 
+                  ", id_demande=" . (isset($postData['id_demande']) ? $postData['id_demande'] : 'manquant'));
         
-        // Récupérer les données POST, peu importe le Content-Type
-        $input = file_get_contents('php://input');
-        parse_str($input, $postData);
-        
-        // Vérifier que les données nécessaires sont présentes
-        if (!isset($postData['role']) || !isset($postData['id_userAsking'])) {
-            http_response_code(400);
-            echo json_encode(["error" => "Paramètres manquants"]);
-            return;
-        }
-    
-        // Vérifie que les paramètres requis existent bien
-        if (!isset($params['id_user'])) {
-            http_response_code(400);
-            echo json_encode(["error" => "Paramètres manquants"]);
-            return;
-        }
-    
-        $role           = $postData['role'];
-        $userId         = $params['id_user'];
-        $userIdAsking   = $postData['id_userAsking'];
-    
-        // Vérification du rôle de l'utilisateur
-        $user = $this->authController->getUserById($userId);
-        if ($user['role'] === "administrateur") {
-            $demande = $this->getDemandeByIdUser($userIdAsking);
-            if (!empty($demande)) {
-                $this->acceptRole($demande, $userIdAsking, $role);
-                http_response_code(200);
-                echo json_encode(["message" => "Rôle accepté avec succès", "redirect" => "index.html"]);
-            } else {
-                http_response_code(404);
-                echo json_encode(["error" => "Aucune demande trouvée"]);
-            }
-        } else {
-            http_response_code(403);
-            echo json_encode(["error" => "Accès refusé"]);
-        }
+        http_response_code(400);
+        echo json_encode(["error" => "Paramètres manquants"]);
+        return;
     }
+    
+    // Vérifie que les paramètres requis existent bien
+    if (!isset($params['id_user'])) {
+        error_log("Paramètre id_user manquant dans l'URL");
+        http_response_code(400);
+        echo json_encode(["error" => "Paramètre id_user manquant"]);
+        return;
+    }
+    
+    $role = $postData['role'];
+    $userId = $params['id_user'];
+    $userIdAsking = $postData['id_userAsking'];
+    $idDemande = $postData['id_demande'];
+    
+    error_log("Traitement acceptRole avec: role=$role, userId=$userId, userIdAsking=$userIdAsking, idDemande=$idDemande");
+    
+    // Vérification du rôle de l'utilisateur
+    $user = $this->authController->getUserById($userId);
+    if ($user['role'] === "administrateur") {
+        $demande = $this->getDemandeByIdUser($userIdAsking);
+        if (!empty($demande)) {
+            $this->acceptRole($demande, $userIdAsking, $role, $idDemande);
+            http_response_code(200);
+            echo json_encode(["message" => "Rôle accepté avec succès", "redirect" => "index.html"]);
+        } else {
+            error_log("Aucune demande trouvée pour l'utilisateur $userIdAsking");
+            http_response_code(404);
+            echo json_encode(["error" => "Aucune demande trouvée"]);
+        }
+    } else {
+        error_log("Accès refusé: l'utilisateur $userId n'est pas administrateur");
+        http_response_code(403);
+        echo json_encode(["error" => "Accès refusé"]);
+    }
+}
     
 
     private function getDemandeByIdUser(string $idUser) : array
@@ -135,24 +147,81 @@ class RoleController
         return true;
     }
 
-    private function acceptRole(array $demande, string $userIdAsking, string $role)
+    private function acceptRole(array $demande, string $userIdAsking, string $role, string $idDemande): void
     {
         
-        $filePath = $this->authController->getFilePath();
-        $contenu    = file_get_contents($filePath);
-        $users      = json_decode($contenu, true);
-        $user       = $this->authController->getUserById($userIdAsking);
-        $userIndex = array_search($user['id_user'], array_column($users, 'id_user'));
-        $users[$userIndex]['role'] = $role;
-
         $contenuDemande = file_get_contents($this->filePathDemande);
         $demandes       = json_decode($contenuDemande,true);
-        $demande        = $this->getDemandeByIdUser($userIdAsking);
-        $demandeIndex   = array_search($demande['id_user'], array_column($demandes, 'id_user'));
+        $demandeIndex   = array_search($idDemande, array_column($demandes, 'id_demande'));
         unset($demandes[$demandeIndex]);
         $demandes = array_values($demandes);
 
         file_put_contents($this->filePathDemande, json_encode($demandes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        file_put_contents($filePath, json_encode($users, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+        $user = $this->authController->getUserById($userIdAsking);
+        $user['role'] = $role;
+        $users = $this->authController->getAllUsers();
+        foreach ($users as &$u) {
+            if ($u['id_user'] == $userIdAsking) {
+                $u = $user;
+                break;
+            }
+        }
+        file_put_contents($this->authController->getFilePath(), json_encode($users, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    }
+
+    public function handlePostRefuseRole(array $params): void 
+    {
+        header('Content-Type: application/json');
+        
+        // Récupérer les données POST, peu importe le Content-Type
+        $input = file_get_contents('php://input');
+        parse_str($input, $postData);
+        
+        // Vérifier que les données nécessaires sont présentes
+        if (!isset($postData['id_userAsking']) || !isset($postData['id_demande'])) {
+            http_response_code(400);
+            echo json_encode(["error" => "Paramètres manquants"]);
+            return;
+        
+        }
+        // Vérifie que les paramètres requis existent bien
+        if (!isset($params['id_user'])) {
+            http_response_code(400);
+            echo json_encode(["error" => "Paramètres manquants"]);
+            return;
+        }
+
+        $userId         = $params['id_user'];
+        $userIdAsking   = $postData['id_userAsking'];
+        $idDemande      = $postData['id_demande'];
+
+        // Vérification du rôle de l'utilisateur
+        $user = $this->authController->getUserById($userId);
+        if ($user['role'] === "administrateur") {
+            $demande = $this->getDemandeByIdUser($userIdAsking);
+            if (!empty($demande)) {
+                $this->refuseRole($demande, $userIdAsking, $idDemande);
+                http_response_code(200);
+                echo json_encode(["message" => "Rôle refusé avec succès", "redirect" => "index.html"]);
+            } else {
+                http_response_code(404);
+                echo json_encode(["error" => "Aucune demande trouvée"]);
+            }
+        } else {
+            http_response_code(403);
+            echo json_encode(["error" => "Accès refusé"]);
+        }
+    }
+
+    private function refuseRole(array $demande, string $userIdAsking, string $idDemande)
+    {
+        $contenuDemande = file_get_contents($this->filePathDemande);
+        $demandes       = json_decode($contenuDemande,true);
+        $demandeIndex   = array_search($idDemande, array_column($demandes, 'id_demande'));
+        unset($demandes[$demandeIndex]);
+        $demandes = array_values($demandes);
+
+        file_put_contents($this->filePathDemande, json_encode($demandes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
     }
 }

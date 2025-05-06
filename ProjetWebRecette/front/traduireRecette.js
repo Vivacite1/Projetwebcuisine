@@ -28,6 +28,16 @@ window.addEventListener("beforeunload", async () => {
 	}
 });
 
+const role = localStorage.getItem("role");
+
+const listeUtilisateur = document.getElementById("listUtil")
+if (role !== "administrateur")
+{
+	if (listeUtilisateur) {
+		listeUtilisateur.style.display = "none";
+	}
+}
+
 const buttonSave = document.getElementById("buttonSave");
 if(buttonSave)
 {

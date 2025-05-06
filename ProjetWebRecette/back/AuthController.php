@@ -113,7 +113,7 @@ class AuthController
 
 		if(!$trouve){
 			http_response_code(400);
-			echo json_encode(['message' => 'Utilisateur non trouvé']);
+			echo json_encode(['message' => 'Email ou Mot de passe incorrect']);
 			return;
 		}
 
@@ -188,7 +188,7 @@ class AuthController
 		echo json_encode($demandes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 	}
 
-	private function getAllUsers(): array
+	public function getAllUsers(): array
 	{
 		return file_exists($this->filePath) ? json_decode(file_get_contents($this->filePath), true) ?? [] : [];
 	}
